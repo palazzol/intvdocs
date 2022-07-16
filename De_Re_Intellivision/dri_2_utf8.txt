@@ -1,0 +1,2328 @@
+                                                   
+                    ┌────────────────────────────────────┐
+                    │  Mattel Electronics Intellivision  │
+                    │       Intelligent Television       │
+                    └────────────────────────────────────┘
+
+
+
+             ██
+             █          "Mattel Electronics Presents"
+         ██████
+         █ ███
+         █ █████            ┌───────────────────┐
+           ██               │De Re Intellivision│
+                            └───────────────────┘
+           ██
+          ██████     (In Latin "All About Intellivision")
+          ██████
+          █    █
+         ██    █       Compilation By William M. Moeller
+         ██    █
+        ██
+        █
+
+────────────────────────────────────────────────────────────────────────────
+                     Last Modified November 28, 1997
+                    ─────────────────────────────────
+
+                               Chapter II
+
+                        "Technical Information"
+
+
+Intellivision Technical Information ├────────────────────────────────────────
+────────────────────────────────────┘
+
+System Description │
+───────────────────┘
+
+The following technical information covers the main components of the
+original Master Component Model #2609, as well as other minor components
+and peripherals. The information also applies to the Sears Super Arcade,
+Radio Shack Tandyvision One, the INTV Super Pro System, INTV System III
+and Slyvania Intellivision, which are all clones of the original Master
+Component with minor cosmetic differences.
+
+The Intellivision II although compatible with most original Master Component
+parts, does have some design differences from the Model 2609, the most
+notable being a reduced chipset, and modified EXEC program.
+
+All Intellivision Master componenets were able to utilize the Intellivoice
+Voice Module and Entertainment Computer System. The Keyboard componenet was
+physically designed to work with the original Master Component, and the System
+Changer was designed to work with the Intellivision II.
+
+The main components of the Mattel Intellivision system (All Models) are as
+follows:
+
+
+ -  CPU: General Instruments CP1610
+ -  Standard Television Interface Chip (STIC)
+ -  System RAM
+ -  Sound Chip
+ -  Graphics ROM (GROM) and Graphics RAM (GRAM)
+ -  The Executive ROM (exec)
+ -  Scratchpad RAM
+ -  Program Cartridges
+ -  Hand Controllers
+
+
+The Intellivision system also includes components which are not directly
+accessed by its game programs. The main function of these components are
+to generate the 3.579545 MHz system clock, convert the digital sound and
+video signals to an RF output and to supply power for the system.
+
+Note: The GI ROMs include more than just ROM code, they include on-board
+      programming to identify their address locations and on-board
+      latches so that a common address/data bus can be used. The 40 pin
+      ROM also contains the interrupt logic used by the Intellivision
+      and the memory map to control the address signals for the external
+      (cartridge) memory.
+
+
+Original model #2609 Intellivision │
+───────────────────────────────────┘
+
+The component designations are as follows on the Original Master Component:
+
+Sound ............. AY-3-8914 ................ 40-pin
+      ............. AY-3-8916 Intellivision II
+ROM ............... RO-3-9503-003 ............ 40-pin  (Graphic ROM)
+ROM ............... RO-3-9502-011 ............ 40-pin  (exec ROM 2K)
+ROM ............... AY-3-9504-021 ............ 28-pin  (exec ROM 2K)
+                    Cart ROM typically to address 05000H-06000H (4K)
+Colour ............ AY-3-8915 ................ 18-pin
+
+Intellivision II │
+─────────────────┘
+
+The component designations are as follows on the Intellivision II
+Master Component:
+
+exec Rom .......... GI RO-3-9506-010 ......... 40-pin  (4K)
+                    Decodes to address 01000H-01FFFH   (4K)
+
+Other Chips found in the Intellivision II │
+──────────────────────────────────────────┘
+
+Chip name, label                         Function
+───────────────-                         ───────-
+Mattel-Lad 5872-0010 (Motorola) RQ8328 . Timing/address generator (?)
+GI AY-3-8915 8308 8224 ................. TV COLOUR generator
+/C207 MM2114N-055 (4) .................. 1024 x 4, 2k total STATIC RAM
+/C209 MM2114N-055 ...................... ???
+
+
+Intellivision Program Cartridges │
+─────────────────────────────────┘
+
+Typical Program Cart ROMs.
+
+Donkey Kong Cart ROM
+ROM ............... AY-3-9504-301 ............ 28-pin  Program ROM
+ROM ............... AY-3-9504-401 ............ 28-pin  Program ROM
+
+Astrosmash Cart ROM
+ROM ............... RO3-9504-245 - GI 8146 C-A .. 28-pin  (2K x 10)
+ROM ............... RO3-9504-145 - GI 8146 S-A .. 28-pin  (2K x 10)
+
+                      
+General instrument CP160 processor overview ├──────────────────────────────────
+────────────────────────────────────────────┘
+
+The CPU is the General Instruments CP1610. This is a general purpose
+16-bit microprocessor which has 1024 separate op-codes, and can equally
+well use 8-bit, 10-bit, 14-bit, and 16-bit RAM or ROM. The CP1610 in the
+Intellivision uses a machine cycle rate of 894.886 KHz. Individual
+operations on the 1610 take between 4 and 12 microcycles (Note: the
+CP1600 is the prototypical or conventional form of the microprocessor,
+the CP1610 used in the Intellivision is precisely the same in all
+respects except for a differing clock rate.)
+
+Since most 1610 instructions are 10-bits wide, game programs are stored
+in 10-bit wide ROMs. This 10-bit "byte" is referred to as a decle
+(rhymes with "heckle"). Some instructions require 16 bits; these are
+stored in two successive 10-bit locations, referred to as a bidecle.
+(For prototyping, dual 8-bit EPROMs are used, with the low 8 bits of
+each decle stored in one EPROM and the top 2 bits stored in the other.)
+
+
+* Data and addresses are multiplexed on a single 16 bit bus.
+
+* Ouput buffered via internal line drivers.
+
+* 8 Bus phases (read/write/waitstate/DMA/ etc)
+
+* Branch on external condition (16 conditions supported)
+
+* Standard compliment of status flags. (S,Z,C,O)  Typical polarity.
+
+
+
+CP-1600 Register set │
+─────────────────────┘
+
+ 8 bits 8 bits
+┌──────┐──────┐
+
+┌──────┬──────┐ R0 ─── No assigned function.
+├──────┼──────┤ R1 ─┐
+├──────┼──────┤ R2  ├─ Data Counters
+├──────┼──────┤ R3  │
+├──────┼──────┤ R4 ─┬─ Data Counters
+├──────┼──────┤ R5 ─┘  with autoincrement
+├──────┼──────┤ R6 ─── Stack
+├──────┼──────┤ R7 ─── Program Counter
+└──────┴──────┘
+
+└─────────────┘
+    16 bits
+
+
+* All 8 registers can be referenced as general purpose registers.
+
+* All registers with the exception of R0 have unique features shared
+  with the other registers in their class.
+
+* JSR moves the current program counter into a register.
+
+* Addressing modes... Direct. Implied. Stack
+
+* CPU STACK 112 words, mapped from 002F0H-0035FH.
+
+
+CP1600 Instruction set │
+───────────────────────┘
+                                                 mmm = data counter reg
+            10 bit Instruction                   mmm = 000 = R0
+              ┌────────────┐                           001 = R1
+HLT            0000 000 000                            010 = R2
+SDBD           0000 000 001                            011 = R3
+EIS            0000 000 010                            100 = R4
+DIS            0000 000 011                            101 = R5
+JD    LABEL    0000 000 100 11pppppp01 pppp            110 = R6
+J     LABEL    0000 000 100 11pppppp10 pppp            111 = R7
+JSR   RB,LABEL 0000 000 100 bbpppppp00 pppp
+JSRE  RB,LABEL 0000 000 100 bbpppppp01 pppp      m = shift count
+JSRD  RB,LABEL 0000 000 100 bbpppppp10 pppp
+TCI            0000 000 101                      p = one bit of
+CLRC           0000 000 110                          immediate address
+SETC           0000 000 111
+INCR  RD       0000 001 ddd                      rr = 00 = R0
+DECR  RD       0000 010 ddd                           01 = R1
+COMR  RD       0000 011 ddd                           10 = R2
+NEGR  RD       0000 100 ddd                           11 = R3
+ADCR  RD       0000 101 ddd
+GSWD  RR       0000 110 0rr                      sss = source register
+NOP   (2)      0000 110 10m                      sss = 000 = R0
+SIN   (2)      0000 110 11m                            001 = R1
+RSWD  RS       0000 111 sss                            010 = R2
+                                                       011 = R3
+SWAP  RR(,2)   0001 000 mrr                            100 = R4
+SLL   RR(,2)   0001 001 mrr                            101 = R5
+SLLC  RR(,2)   0001 011 mrr                            110 = R6
+RLC   RR(,2)   0001 010 mrr                            111 = R7
+SLR   RR(,2)   0001 100 mrr
+RRC   RR(,2)   0001 110 mrr                      s = Sign of
+SAR   RR(,2)   0001 1c1 mrr                          displacement
+SARC  RR(,2)   0001 111 mrr                          1 = negative
+
+TSTR  RS       0010 sss sss                      bb = One of three regs
+MOVR  RS,RD    0010 sss ddd                      bb = 00 = R0
+JR    RS       0010 sss 111                           01 = R1
+                                                      10 = R2
+ADDR  RS,RD    0011 sss ddd
+                                                 eeee = 4 bit branch
+SUBR  RS,RD    0100 sss ddd                             condition external
+CMPR  RS,RD    0101 sss ddd                             lines bext0-4
+ANDR  RS,RD    0110 sss ddd
+XORR  RS,RD    0111 sss ddd                      ddd = Destination reg
+CLRR  RD       0111 ddd ddd                      ddd = 000 = R0
+                                                       001 = R1
+B     DISP     1000 z00 000 pppp                       010 = R2
+NOPP           1000 z01 000 pppp                       011 = R3
+BCOND DISP,E   1000 z0c ccc pppp                       100 = R4
+BEXT  DISP,E   1000 z1e eee pppp                       101 = R5
+                                                       110 = R6
+MVO   RS,ADDR  1001 000 sss pppp                       111 = R78
+MVO@  RS,RM    1001 mmm sss
+PSHR  RS       1001 110 sss                      cccc = 4 bit branch
+MVOI  RS,DATA  1001 111 sss ||||                        condition
+
+MVI   ADDR,RD  1010 000 ddd pppp                 |||| = one word of
+MVI'  RM,RD    1010 mmm ddd                             immediate data
+PULR  RD       1010 110 ddd                             (10 or 16 bits)
+MVI   DATA,RD  1010 111 ddd ||||
+
+ADD   ADDR,RD  1011 000 ddd pppp       Branch conditons │
+ADD@  RM,RD    1011 mmm ddd            ─────────────────┘
+ADDI  DATA,RD  1011 111 ddd ||||       0001  Carry / Greater than
+                                       1001  No Carry / Less than
+SUB   ADDR,RD  1100 000 ddd pppp       0010  Overflow
+SUB@  RM,RD    1100 mmm ddd            1010  No overflow
+SUBT  DATA,RD  1100 111 ddd ||||       0011  Positive
+                                       0100  Negative
+CMP   ADDR,RS  1101 000 sss pppp       0100  equal (zero)
+CMP@  RM,RS    1101 mmm sss            1100  Not equal (not zero)
+CMPI  DATA,RS  1101 111 sss |||        0101  Less than
+                                       1101  Greater than or equal
+AND   ADDR,RD  1110 000 ddd pppp       0110  Less than or equal
+AND@  RM,RD    1110 mmm ddd            1110  Greater than
+ANDI  DATA,RD  1110 111 ddd ||||       0111  Unequal sign and carry
+                                       1111  Equal sign and carry
+XOR   ADDR,RD  1111 000 ddd pppp
+XOR@  RM,RD    1111 mmm ddd
+XORI  DATA,RD  1111 111 ddd ||||
+
+
+Instruction Set (Summary Listing) │
+──────────────────────────────────┘
+
+INTERNAL REFERENCE INSTRUCTIONS
+
+┌─────────────────────┐
+│Register To Register │
+├─────────────────────┴──────────────────────────────────────────────────────┐
+│Mnemonics          Operation          Microcycles      Comments             │
+├─────────┬───────────────────────────────┬────┬─────────────────────────────┤
+│ MOVR    │ MOVe Register                 │6/7 │                             │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ TSTR    │ TeST Register                 │6/7 │   MOVR to itself            │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ JR      │ Jump to address in Register   │ 7  │   MOVR to PC                │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ ADDR    │ ADD contents of Registers     │ 6  │                             │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ SUBR    │ SUBtract contents of Registers│ 6  │                             │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ CMPR    │ CoMPare Registers by subtr.   │ 6  │  Results not stored         │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ ANDR    │ logical AND Registers         │ 6  │                             │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ XORR    │ eXclusive OR Registers        │ 6  │                             │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ CLRR    │ CLeaR Register                │ 6  │  XORR with itself           │
+└─────────┴───────────────────────────────┴────┴─────────────────────────────┘
+
+                                                                   
+┌─────────────────────┐
+│Single Register      │
+├─────────────────────┴──────────────────────────────────────────────────────┐
+│Mnemonics          Operation          Microcycles      Comments             │
+├─────────┬───────────────────────────────┬────┬─────────────────────────────┤
+│ INCR    │ INCrement Register            │ 6  │                             │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ DECR    │ DECrement Register            │ 6  │                             │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ COMR    │ COMplement Register           │ 6  │   One's Complement          │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ NEGR    │ NEGate Register               │ 6  │   Two's Complement          │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ ADCR    │ ADd Carry Bit to Register     │ 6  │                             │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ GSWD    │ Get Status WorD               │ 6  │                             │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ NOP     │ No OPeration                  │ 6  │                             │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ SIN     │ Software INterrupt            │ 6  │   Pulse to PCIT pin         │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ RSWD    │ Return Status WorD            │ 6  │                             │
+└─────────┴───────────────────────────────┴────┴─────────────────────────────┘
+
+                                                   
+┌─────────────────────┐
+│Register Shift       │
+├─────────────────────┴──────────────────────────────────────────────────────┐
+│Mnemonics          Operation          Microcycles      Comments             │
+├─────────┬───────────────────────────────┬────┬─────────────────────────────┤
+│ SWAP    │ SWAP 8-bit bytes              │ 6  │  ───┐                       │
+├─────────┼───────────────────────────────┼────┤     │                       │
+│ SLL     │ Shift Logical Left            │ 6  │     │                       │
+├─────────┼───────────────────────────────┼────┤     │                       │
+│ RLC     │ Rotate Left thru Carry        │ 6  │     │   Not interruptable   │
+├─────────┼───────────────────────────────┼────┤     │  One or two position  │
+│ SLLC    │ Shift Logical Left thru Carry │ 6  │     │   shift capability.   │
+├─────────┼───────────────────────────────┼────┤     ├── Two position SWAP   │
+│ SLR     │ Shift Logical Right           │ 6  │     │    not supported      │
+├─────────┼───────────────────────────────┼────┤     │                       │
+│ SAR     │ Shift Arithmetic Right        │ 5  │     │   (Add two cycles for │
+├─────────┼───────────────────────────────┼────┤     │    2-position shift)  │
+│ RRC     │ Rotate Right thru Carry       │ 6  │     │                       │
+├─────────┼───────────────────────────────┼────┤     │                       │
+│ SARC    │ Shift Arithmetic Right thru   │ 6  │  ───┘                       │
+│         │ Carry                         │    │                             │
+└─────────┴───────────────────────────────┴────┴─────────────────────────────┘
+
+                                                             
+┌─────────────────────┐
+│Control Instructions │
+├─────────────────────┴──────────────────────────────────────────────────────┐
+│Mnemonics          Operation          Microcycles      Comments             │
+├─────────┬───────────────────────────────┬────┬─────────────────────────────┤
+│ HLT     │ HaLT                          │ 4  │                             │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ SDBD    │ Set Double Byte Data          │ 4  │ Must precede external       │
+├─────────┼───────────────────────────────┼────┼─reference to double byte────┤
+│ EIS     │ Enable Interrupt System       │ 4  │  ──┐    data                │
+├─────────┼───────────────────────────────┼────┤    │                        │
+│ DIS     │ Disable Interrupt System      │ 4  │    │                        │
+├─────────┼───────────────────────────────┼────┤    │                        │
+│ TCI     │ Terminate Current Interrupt   │ 4  │    ├─  Not interruptable    │
+├─────────┼───────────────────────────────┼─ ──┤    │                        │
+│ CLRC    │ CLeaR Carry to zero           │ 4  │    │                        │
+├─────────┼───────────────────────────────┼────┤    │                        │
+│ SETC    │ SET Carry to one              │ 4  │  ──┘                        │
+└─────────┴───────────────────────────────┴────┴─────────────────────────────┘
+
+
+┌─────────────────────┐
+│Jump Instructions    │
+├─────────────────────┴──────────────────────────────────────────────────────┐
+│Mnemonics          Operation          Microcycles      Comments             │
+├─────────┬───────────────────────────────┬────┬─────────────────────────────┤
+│ J       │ Jump                          │ 12 │                             │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ JE      │ Jump, Enable, interrupt       │ 12 │                             │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ JD      │ Jump, Disable interrupt       │ 12 │                             │
+├─────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ JSR     │ Jump, Save Return             │ 12 │  ──┐                        │
+├─────────┼───────────────────────────────┼────┤    │                        │
+│ JSRE    │ Jump, Save Return & Enable    │ 12 │    ├──  Return Address      │
+├─────────┼───────────────────────────────┼────┤    │     saved in R4,       │
+│ JSRD    │ Jump, Save Return & Disable   │ 12 │    │       5 or 6           │
+│         │ interrupt                     │    │  ──┘                        │
+└─────────┴───────────────────────────────┴────┴─────────────────────────────┘
+
+
+
+EXTERNAL REFERENCE INSTRUCTIONS
+                                       Note:
+┌─────────────────────────────────┐    Add 2 cycles if test condition is
+│Conditional Branch Instructions  │    true except "*"
+├─────────────────────────────────┴───────────────────────────────────────────┐
+│Mnemonics          Operation          Microcycles      Comments              │
+├──────────┬───────────────────────────────┬────┬─────────────────────────────┤
+│ B        │ unconditional Branch          │ 9* │                             │
+├──────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ NOPP     │ NO OPeration                  │ 7* │   Two words                 │
+├──────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ BC(BLGE) │ Branch on Carry               │ 7  │   C = 1                     │
+├──────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ BNC      │ Branch on No Carry            │ 7  │   C = 0                     │
+├──────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ BOV      │ Branch on OVerflow            │ 7  │   OV = 1                    │
+├──────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ BNOV     │ Branch on No OVerflow         │ 7  │   OV = 0                    │
+├──────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ BPL      │ Branch on PLus                │ 7  │   S = 0                     │
+├──────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ BMI      │ Branch on Minus               │ 7  │   S = 1                     │
+├──────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ BZE(BEQ) │Branch if Not Zero or Not EQual│ 7  │   Z = 1                     │
+├──────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│BNZE(BNEQ)│Branch if Not Zero or Not EQual│ 7  │   Z = 0                     │
+├──────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ BLT      │ Branch if Less Than           │ 7  │   SVOV = 1                  │
+├──────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ BGE      │Branch if Greater than or Equal│ 7  │   SVOV = 0                  │
+├──────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ BLE      │ Branch if Less than or Equal  │ 7  │   ZV(SVOV) = 1              │
+├──────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ BGT      │ Branch if Greater Than        │ 7  │   ZV(SVOV) = 0              │
+├──────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ BUSC     │ Branch if Sign not = Carry    │ 7  │   CVS = 1                   │
+├──────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│ BESC     │ Branch if Sign = Carry        │ 7  │   CVS = 0                   │
+├──────────┼───────────────────────────────┼────┼─────────────────────────────┤
+│          │Branch if External condition is│    │  LSB of instruction are     │
+│ BEXT     │              True             │ 7  │  decoded select 1 of 16     │
+│          │                               │    │  external conditions        │
+└──────────┴───────────────────────────────┴────┴─────────────────────────────┘
+                                                                               
+┌─────────────────────┐
+│  Input/Output       │
+├─────────────────────┴──────────────────────────────────────────────────────┐
+│Mnemonics     Operation               Microcycles            Comments       │
+├─────────────────────────────────┬────┬────┬──────┬─────┬───────────────────┤
+│                                 │Dir.│Imm.│Indir.│Stack│                   │
+├─────────┬───────────────────────┼────┼────┼──────┼─────┼───────────────────┤
+│ MVO     │ MoVe Out              │ 11 │  9 │  9   │  9  │ Not interruptable │
+├─────────┼───────────────────────┼────┼────┼──────┼─────┼───────────────────┤
+│ PSHR    │ PuSH Register to Stack│  - │ -  │  -   │  9  │ PSHR=MVO@R6       │
+│         │                       │    │    │      │     │ Not interruptable │
+├─────────┼───────────────────────┼────┼────┼──────┼─────┼───────────────────┤
+│ MVI     │ MoVe in               │ 10 │  8 │  8   │ 11  │                   │
+├─────────┼───────────────────────┼────┼────┼──────┼─────┼───────────────────┤
+│ PULR    │ PULl from stack to    │  - │  - │  -   │ 11  │ PULR-MV1@R6       │
+│         │     Register          │    │    │      │     │                   │
+└─────────┴───────────────────────┴────┴────┴──────┴─────┴───────────────────┘ 
+
+
+┌─────────────────────┐
+│  Arithmetic & Logic │
+├─────────────────────┴──────────────────────────────────────────────────────┐
+│Mnemonics     Operation               Microcycles            Comments       │
+├─────────────────────────────────┬────┬────┬──────┬─────┬───────────────────┤
+│                                 │Dir.│Imm.│Indir.│Stack│                   │
+├─────────┬───────────────────────┼────┼────┼──────┼─────┼───────────────────┤
+│ ADD     │ ADD                   │ 10 │  8 │  8   │ 11  │                   │
+├─────────┼───────────────────────┼────┼────┼──────┼─────┼───────────────────┤
+│ SUB     │ SUBtract              │ 10 │  8 │  8   │ 11  │                   │
+├─────────┼───────────────────────┼────┼────┼──────┼─────┼───────────────────┤
+│ CMP     │ CoMPare               │ 10 │  8 │  8   │ 11  │ Result not saved  │
+├─────────┼───────────────────────┼────┼────┼──────┼─────┼───────────────────┤
+│ AND     │ logical AND           │ 10 │  8 │  8   │ 11  │                   │
+├─────────┼───────────────────────┼────┼────┼──────┼─────┼───────────────────┤
+│ XOR     │ eXclusive OR          │ 10 │  8 │  8   │ 11  │                   │
+└─────────┴───────────────────────┴────┴────┴──────┴─────┴───────────────────┘
+
+NOTE: 1 MICROCYCLE = 2 CLOCK CYCLES
+
+
+
+
+     
+Clock ├──────────────────────────────────────────────────────────────────────
+──────┘
+
+The CP-1600 uses a dual phase clock.  Clock pulses are in phase,
+opposite in polarity, and asymmetric.
+
+      ┌─────┐  ┌─────┐
+O1  ──┘     └──┘     └──────
+O2 ────┐  ┌──────┐  ┌──────
+       └──┘      └──┘
+
+
+Bus Control Signals ├─────────────────────────────────────────────────────────
+────────────────────┘
+
+┌───┬───┬────┬──────┬─────────────────────────────────────────────────┐
+│BC1│BC2│BDIR│      │                                                 │
+├───┼───┼────┼──────┼─────────────────────────────────────────────────┤
+│ 0 │ 0 │ 0  │NACT  │ CPU inactive, and disconnected from bus         │
+├───┼───┼────┼──────┼─────────────────────────────────────────────────┤
+│ 0 │ 0 │ 1  │BAR   │ A memory address is being presented on the BUS  │
+├───┼───┼────┼──────┼─────────────────────────────────────────────────┤
+│ 0 │ 1 │ 0  │IAB   │ CPU is acknowledging an interrupt request       │
+│   │   │    │      │ External logic must place the starting address  │
+│   │   │    │      │ for the interrupt service routine on the bus.   │
+├───┼───┼────┼──────┼─────────────────────────────────────────────────┤
+│ 0 │ 1 │ 1  │DWS   │ Data write strobe to memory.                    │
+├───┼───┼────┼──────┼─────────────────────────────────────────────────┤
+│ 1 │ 0 │ 0  │ADAR  │ This signal identifies a time interval during   │
+│   │   │    │      │ which the Data/Address bus is floated, while    │
+│   │   │    │      │ data input on the Data Bus is being interpreted │
+│   │   │    │      │ as the effecitve memory address during a direct │
+│   │   │    │      │ memory addressing operation.                    │
+├───┼───┼────┼──────┼─────────────────────────────────────────────────┤
+│ 1 │ 0 │ 1  │DW    │ Data is being written to memory.                │
+│   │   │    │      │ Preceeds DWS by one cycle.                      │
+├───┼───┼────┼──────┼─────────────────────────────────────────────────┤
+│ 1 │ 1 │ 0  │DTB   │ Read strobe (external device is to place data   │
+│   │   │    │      │ on the bus.                                     │
+│ 1 │ 1 │ 1  │INTAK │ Interrupt acknnowledge.  Followed by IAD.       │
+└───┴───┴────┴──────┴─────────────────────────────────────────────────┘
+
+  │  BAR MC1  │ NACT MC2  │  DTB MC3  │   CP-1600
+  │t1│t2│t3│t4│  │  │  │  │t1│t2│t3│t4│   Instruction Fetch timing
+  │  │  │  │  │t1│t2│t3│t4│  │  │  │  │   ────────────────────────
+  │  │  │  │  │  │  │  │  │  │  │  │  │
+  ┌─┐   ┌─┐   ┌─┐   ┌─┐   ┌─┐   ┌─┐   ┌─┐   ┌──  O1
+──┘ └───┘ └───┘ └───┘ └───┘ └───┘ └───┘ └───┘
+─┐|  ┌─┐|  ┌─┐|  ┌─┐   ┌─┐|  ┌─┐   ┌─┐|  ┌─┐
+ └───┘ └───┘ └───┘ └───┘ └───┘ └───┘ └───┘ └───  O2
+  |  |  |     |           ┌───────────┐
+──────────────────────────┘           └────────  BC1
+  |  |  |     |           ┌───────────┐
+──────────────────────────┘           └────────  BC2
+  ┌───────────┐
+──┘  |  |     └────────────────────────────────  BDIR
+     |  ┌─────────┐            ┌───┐
+─────xxx│         ├────────────┤   ├───────────  Address
+        └─────────┘            └───┘
+        Address out           Data in
+
+
+                    CPU PINOUTS CP-1600
+
+                   ┌────────┬┬────────┐
+           EBCI ───┤ 1      └┘     40 ├──- -PCIT - Goes to Vcc on IVision?
+         -MSYNC ───┤ 2             39 ├─── GND
+RAM Pin 14  BC1 ───┤ 3 ─┐B         38 ├──- (PHI)1  - Mattel Pin 3
+Mattel Pin 15      │    │UC           │
+RAM Pin 15  BC2 ───┤ 4  │ST        37 ├─── (PHI)2  - Mattel Pin 5
+Mattel Pin 13      │    │ R           │
+RAM Pin 16 BDIR ───┤ 5 ─┘ L        36 ├──- VDD +12V 70ma +11V 1610 ?
+Mattel Pin 11      │                  │
+            D15 ───┤ 6             35 ├─── VBB  -3V  2ma
+            D14 ───┤ 7             34 ├──- VCC  +3V 12ma
+            D13 ───┤ 8             33 ├─── BDRDY (Wait) RAM Pin 9
+            D12 ───┤ 9             32 ├──- -STPST
+            D11 ───┤ 10            31 ├─── -BUSRQ STIC Pin 12
+            D10 ───┤ 11            30 ├──- HALT
+             D9 ───┤ 12   CP1600   29 ├─── BUSAK RAM 12
+             D8 ───┤ 13    CPU     28 ├──- INTR
+             D0 ───┤ 14            27 ├─── -INTRM
+             D1 ───┤ 15            26 ├──- TCI
+             D7 ───┤ 16            25 ├─── EBCA0 ─┬─ [nc] ?
+             D6 ───┤ 17            24 ├──- EBCA1  │
+             D5 ───┤ 18            23 ├─── EBCA2  │
+             D4 ───┤ 19            22 ├──- EBCA3 ─┘
+             D3 ───┤ 20            21 ├─── D2
+                   └──────────────────┘
+
+D0-D15 ............... Data and address bus ................ Tristate,
+                                                             Bidirectional
+
+BDIR, BC1, BC2 ....... Bus control signals ................. Output
+(PHI)1,(PHI)2 ........ Clock signals ....................... Input
+-MSYNC ............... Master synchronization (RESET)....... Input
+                       Hold low for 10 milliseconds to reset
+                       the CPU.
+
+EBCA0-EBCA3 .......... External branch condition addr lines  Output ─┐
+EBCI ................. External branch condition input ..... Input  ─┘
+-PCIT ................ Program Counter inhibit/software .... I/O
+                       interrupt signal
+-BDRDY ............... -WAIT ............................... Input
+-STPST ............... CPU stop or start on high-to-low .... Input
+                       transition
+HALT ................. Halt state signal ................... Output
+-INTR, -INTRM ........ Interrupt request lines ............. Input
+                       INTRM is maskable.
+TCI .................. Terminate current interrupt ......... Output
+-BUSRQ ............... Bus request ......................... Input
+-BUSAK ............... External bus control acknowledge .... Output
+VBB, VCC, VDD, GND ... Power and ground
+
+
+Stic Chip ├────────────────────────────────────────────────────────────────
+──────────┘
+
+The Standard Television Interface Chip (STIC), the General Instruments
+AY-3-8900-1, controls the video display of the Intellivision. Roughly
+speaking, the CPU tells the STIC how to create a desired visual display,
+and the STIC does all the dirty work without further work by the CPU.
+
+The STIC will display a background field of 240 "cards" (20 wide and 12
+high; each card is 8 by 8 pixels), giving a resolution of 160 pixels
+wide and 96 pixels high (each pixel is 2 TV lines high and is in the
+proportion of 5 wide by 4 high). NOTE: The STIC does NOT display the far
+right column of pixels, giving an actual displayed resolution of 159 by
+96 pixels. Each pixel can be in any of 16 colours (eight "primaries" and
+eight "pastels.").
+
+In addition, the STIC controls 8 "moving objects", each of which can be
+8 wide by 8 high or, at double resolution, 8 wide by 16 half-pixels high
+(each moving object can also be double-sized in width and/or height).
+The beauty of this system is that once the CPU has defined a background
+and a moving object shape, it can change the location of an object
+merely by writing a different address to the STIC. NOTE: The moving
+objects can be located on a grid space wider and taller than the
+displayed background, allowing them to smoothly slide on or off the
+screen at the edges.
+
+[Blue Sky Rangers comment: Two methods were developed to get around the
+limit of only eight moving objects: (1) multiplexing is redefining and
+repositioning one object from frame to frame to give the illusion of two
+separate objects; (2) sequencing GRAM is writing directly to the
+Graphics RAM locations, normally only accessed by the exec, to animate
+background cards. Because it causes objects to flicker, marketing forbid
+the use of multiplexing (common in Atari 2600 and Colecovision games).
+Sequencing GRAM, however, was used often, including in Space Armada,
+Star Strike and TRON Solar Sailer to create screens full of movement.]
+
+The STIC will take care of changing the location of an object,
+background, overlaps, etc. The STIC will also keep track of moving
+object interactions with other moving objects or with the background
+field, and will signal the CPU when crashes occur. As an example, the
+CPU can define a playing field and a ball moving on it. Then the CPU can
+move the ball around the field merely by writing a new X,Y location to
+the STIC. The STIC will make sure that the background properly
+re-appears after an object moves away, and (if requested) will signal
+the CPU when the ball moves off the edge of the playing field or
+intersects another moving object such as an opposing player.
+
+The STIC also can cause the entire background to move smoothly, one
+pixel at a time, either in the X-direction or the Y-direction. Moving
+objects move with the background. (Special subroutines are available to
+the programmer to use this feature to create continuous scrolling
+backgrounds.)
+
+Obviously, the STIC takes a lot of work off the CPU, and it makes it
+possible for Intellivision to have higher quality graphics than any
+other video game or home computer system. However, the STIC has
+limitations which the programmer has to work within, particularly in
+defining colours:
+
+Moving objects can have only ONE colour each; a multi-colour character
+must therefore be made up of more than one of the only eight moving
+objects.
+
+Each 8 by 8 background card can have only TWO colours on it. There are
+two methods for defining these colours: (1) Foreground/Background mode
+allows the colours for each card to be defined individually, but one of
+the two colours on each card is limited to the eight primary colours.
+Two pastel colours cannot appear on the same card. (2) Colour Stack mode
+restricts one of the two colours on each card to either the current or
+next colour from a programmer-defined four-colour circular stack.
+However, since all 16 colours are available for the colour stack, two
+pastel colours CAN appear on the same card. Modes cannot be mixed on one
+screen. In general, a complex screen design is easier to create in
+Foreground/Background mode, but a simpler (or very clever) design using
+Colour Stack can be more colourful.
+
+(NOTE: There is a third mode, Coloured Squares mode, that allows four
+primary colours to be defined per card, but it is literally limited to
+coloured squares -- four equal-sized blocks per card. Therefore, the
+entire background must be made up of 4-pixel by 4-pixel solid-colour
+squares. [This mode was only used three times, for Snafu and the
+unreleased games Empire and Brickout!])
+
+ 
+STIC chip pinouts (AY-3-8900) (AY-3-8900-1) │
+────────────────────────────────────────────┘
+
+
+Features │
+─────────┘
+
+* Outputs include coded signal timings for CCIr and NTSC compatible
+  video signal generation. (AY-3-8900 for CCIR, AY-3-8900-1 for NTSC.
+
+* Operation from a 4.00 Mhz clock for the AY-3-8900 and from a 3.579545
+  Mhz clock for the AY-3-8900-1
+
+* 8 coordinate addressable foreground objects (sprites) on a grid of
+  168 x 104 (x,y) for the AY-3-8900 or 167 x 105 (x,y) for the
+  AY-3-8900-1.
+
+* Foreground objects are independently programmable for half height, y
+  zoom x zoom and 8 or 16 character lines high.
+
+* Selectable background display on a matrix of 20 x 12 (x,y) using 8x8
+  picture elements.
+
+* Capable of accepting data, address and graphics information on common
+  multiplexed bus.
+
+* 16 color capability.
+
+STIC Registers are mapped 0-032H (??)
+
+Displays one 20 x 12 tiled background, made up of 8x8 cards.  It grabs
+card positions from the BACKTAB area in SYSTEM RAM.  The background can
+be told to delay up to 7 pixels rows or columns.  It can be told to
+block out the top 8 pixel rows or columns with a strip (same colour as
+border colour).
+
+Can be set to two different graphics modes: FOREGROUND / BACKGROUND and
+COLOUR STACK / COLOURED SQUARES.
+
+Displays 8 moving objects, of 8x8 size, or 8x16 size.  MO's can also be
+doublesized horizontally and 2, 4, or 8 times the size vertically (see
+YRES, YFULL, and YSIZE bits).  They can also be flipped horizontally
+and/or vertically.
+
+
+STIC Standard TV Interface Chip
+
+                   40 pin STIC chip
+                 ┌────────┬┬────────┐
+  Vss?   Gnd  ───┤ 1      └┘     40 ├───      Vbb?
+         SR3  ───┤ 2             39 ├─── Y2
+         DWS  ───┤ 3             38 ├─── Y1
+         DTB  ───┤ 4             37 ├─── Y0
+         BAR  ───┤ 5             36 ├─── SD0
+      ┌─ BC2  ───┤ 6             35 ├─── SD1
+      │  BC1  ───┤ 7             34 ├─── SD2
+      └─ BDIR ───┤ 8             33 ├─── SD3
+          SR1 ───┤ 9             32 ├─── SD4
+           O1 ───┤ 10    STIC    31 ├─── SD5
+           O2 ───┤ 11            30 ├─── SD6
+          SR2 ───┤ 12            29 ├─── SD7
+       -MSYNC ───┤ 13            28 ├─── SD8
+        RSTIN ───┤ 14            27 ├─── SD9
+        CLOCK ───┤ 15            26 ├─── SD10
+           V4 ───┤ 16            25 ├─── SD11
+    Vss?  GND ───┤ 17            24 ├─── SD12
+           V3 ───┤ 18            23 ├─── SD13
+           V5 ───┤ 19            22 ├─── V1
+          Vcc ───┤ 20            21 ├─── V2
+                 └──────────────────┘
+
+                 40 pin STIC chip wiring
+                 ┌──────────┬┬────────┐
+              ───┤ 1     Gnd└┘Vbb  40 ├───
+              ───┤ 2     SR3  Y2   39 ├───  ROM 30 d2
+ dws  ROM 38  ───┤ 3     DWS  Y1   38 ├───  ROM 32 d1
+ dtb  ROM 37  ───┤ 4     DTB  Y0   37 ├───  ROM 34 d0
+ bar  ROM 36  ───┤ 5     BAR  SD0  36 ├───
+              ───┤ 6     BC2  SD1  35 ├───
+              ───┤ 7     BC1  SD2  34 ├───
+              ───┤ 8    BDIR  SD3  33 ├───  ROM 28 d3
+              ───┤ 9     SR1  SD4  32 ├───  ROM 25 d4
+              ───┤ 10     O1  SD5  31 ├───  ROM 23 d5
+              ───┤ 11     O2  SD6  30 ├───  ROM 20 d6
+              ───┤ 12    SR2  SD7  29 ├───  ROM 18 d7
+-msync ROM 16 ───┤ 13 -MSYNC  SD8  28 ├───  ROM 15 d8
+              ───┤ 14  RSTIN  SD9  27 ├───  ROM 13 d9
+              ───┤ 15  CLOCK  SD10 26 ├───  ROM 11 d10
+              ───┤ 16     V4  SD11 25 ├───  ROM 9  d11
+              ───┤ 17 ?  GND  SD12 24 ├───  ROM 8  d12
+              ───┤ 18     V3  SD13 23 ├───  ROM 7  d13
+              ───┤ 19     V5  V1   22 ├───
+              ───┤ 20    Vcc  V2   21 ├───
+                 └────────────────────┘
+
+Description │
+────────────┘
+
+The AY-3-8900/8900-1 STIC is designed for use within a conputer system
+having an external CPU and an area of ROM and RAM memory.  Some of the
+memory must be dedicated to the support of the graphic character
+descriptors and patterns.
+
+The display facilties of the circuit are separated into two
+simultaneously operating modes.  The main chip function provides eight
+coordinate positioned "foreground" objects, which have a number of
+display options including selection from a choice of 16 colours. The
+second node provides a background display facility, which is composed of
+a matrix of 12 rows by 20 columns of which 19 are composed of 8x8
+picture elements and the 20th from 7*8 picture elements. The
+"background" mode utilizes a dedicated area of external memory (240 by
+14 bit words) to store the charater control codes for each display
+position.  Both modes require some external memory assigned to the
+storage of character patterns.  The graphic pattern memory is eight its
+wide.
+
+AY-3-8900/8900-1 operates within the computer system by time sharing a
+bidrectional 14 bit bus.  The demultiplexing and the system
+synchroniztation are defined by three sets of control signals.
+
+The main synchronizzation which operates at the T.V. frame rate uss SR1,
+SR2, and SR3.  The SR1 signal occurs once per frame and it is used to
+synchronize the CPU algorithms to the intended display sequences.  SR1
+indicates that STIC time is complete and that the AY-3-8900/8900-1 has
+switched to the CPU controlled mode.  SR2 is issued 13 or 14 times per
+picture frame depending on picture offset.  The AY-3-8900/8900-1 takes
+the signal low to request that first line access for a new row of twenty
+characters.
+
+The SR3 signal operates in conjection sith SR2 to read the "background"
+display descriptions out of external memory.  The AY-3-8900/8900-1
+pulses SR3 for each character position.  Once the first line has been
+accessed by the SR2, SR3 combination the following 15 lines to complete
+the 8x8 array are fetched by SR3 alone.
+
+The SR3 signal is also issued during the CPU controlled mode in response
+to BAR, ADAR or DW to enable an external device onto the 14 bit BUS.
+
+The second control bus is used to specify address, read and write
+sequences for the area of external memory used to store the graphic
+character "dot" patterns.  The three signals on thsi BUS are BAR', DTB'
+and DWS'.  The BAR' is output by the AY-3-8900/8900-1 when a valid
+graphic character address is on the 14 bit BUS.  The external memory
+must latch this address for future read or write operations.  The DTB'
+signal indicates that a read is requested and the external memory must
+place the eight bits of character pattern onto the 14 bit BUS.  The DWS
+signal indicates that a "write" is requested.
+
+The graphics control bus is used during "STIC" time in the fetch of
+"foreground" object patterns and "background" object patterns.  During
+the non "STIC" time when in the CPU controlled mode, the graphics
+control BUS can be used to link the memory area containing hte graphics
+patterns to the main memory area of the external microprocessor.
+
+The third control BUS communicates with the external CPU.  This BUS
+conprises signals BC1, BC2 and BDIR.  They are coded to signify address,
+read, and write sequences.  The CPU control BUS is only validated if the
+AY-3-8900/8900-1 is in teh CPU contolled moe, otherwise it is ignored.
+
+
+
+MOVING OBJECTS │
+───────────────┘
+
+Moving objects are numbered 0 - 7.
+
+For moving objects, the x and y positions seem to locate the right
+bottom most pixel, then over and down one.  This is consistant for
+single and double resolution sprites, however, when doublesizing, it
+still considers the same point before you doublesized it.
+
+For instance, an x and y position of 0 would not show anything since the
+MO is off-screen, but once you doublesized it, you'd see part of the MO
+even though it's still considered to be at 0.  This also explains why
+doublesized (etc) objects tend to "pop" on the screen from the top or
+left edges.
+
+00h + n : X position register, moving object #n.
+       ┌────────────────────────────────────────────────┐
+       │15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00 │
+       │ ?  ?  ?  ?  ? xs  v  ?  x  x  x  x  x  x  x  x │
+       └────────────────────────────────────────────────┘
+        where:
+        x = (0 - 255).
+        v = visability (1 = yes, 0 = no)
+        xs = XSIZE: doubles the width
+
+08h + n : Y position register, moving object #n.
+       ┌────────────────────────────────────────────────┐
+       │15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00 │
+       │ ?  ?  ?  ? ym xm ys yf  r  y  y  y  y  y  y  y │
+       └────────────────────────────────────────────────┘
+        where:
+        y = (0 - 127).
+        r = resolution (0 = 8 rows, 1 = 16 rows)
+        yf = YFULL: doubles the scanline height
+        ys = YSIZE: quadruples the scanline height
+        xm = mirror MO horizontally (mirror = 1, 0 = not)
+        ym = mirror MO vertically (mirror = 1, 0 = not)
+
+10h + n : Attribute register, moving object #n.
+       ┌───────────────────────────────────────────────┐
+       │15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00│
+       │ ?  ?  p  F  t  ?  ?  n  n  n  n  n  n  f  f  f│
+       └───────────────────────────────────────────────┘
+        where:
+        Ffff = foreground
+        colour
+        n = card # in GRAM or GROM
+        t = toggle (0 = GROM, 1 = GRAM)
+        p = priority (1 = behind ON bits of background, 0 = in front of)
+
+
+
+COLLISION DETECTION │
+────────────────────┘
+
+The format of a collision register is as follows:
+
+    18h + n : Collision register, moving object #n.
+           ┌───────────────────────────────────────────────┐
+           │15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00│
+           │ ?  ?  ?  ?  ?  ?  ?  b  7  6  5  4  3  2  1  0│
+           └───────────────────────────────────────────────┘
+            where:
+              0 = if set, collision with MO # 0
+              1 = if set, collision with MO # 1...
+              etc.
+              b = collision with any bkg ON bit
+
+COLOUR STACK │
+─────────────┘
+
+The background (OFF bits) during COLOUR STACK mode can be set to 4
+different colours, either primary or pastels (0 - 15).  However, they
+must be used in a predetermined order.  When plotting a card, that card
+can tell the STIC to advance (or not) to the next colour on the COLOUR
+STACK.  When it gets to the last colour (stored in 02BH), it wraps back
+to the 1st colour (stored in 028H).  COLOUR STACK also allows access to
+the "extended set" of GROM characters (lower case, etc): #64 - #212.
+
+028h + n : Colour stack register, colour element #n (0 - 3).
+
+  OTHER
+    020h : Display enable (????)
+    021h : Graphics mode (0 = COLOUR STACK, 1 = FOREGROUND / BACKGROUND)
+    02Ch : Border colour register, primary or pastels (0 - 15).
+    030h : Pixel column delay (0 - 7)
+    031h : Pixel row delay (0 - 7)
+    032h : Block out first card column if bit #0 set, and first card row
+          if bit #1 set.
+
+COLOURS │
+────────┘
+
+There are 16 colours available, encompassing the Primary and Pastel
+range of colours.
+
+  PRIMARY colours are colours 0 - 7:
+  ───────
+  0 = Black      3 = Tan             6 = Yellow
+  1 = Blue       4 = Dark Green      7 = White
+  2 = Red        5 = Green
+
+  PASTELS are colours 8 - 15:
+  ───────
+  8 = Gray       11 = Brown         14 = Yellow-Green
+  9 = Cyan       12 = Pink          15 = Purple
+  10 = Orange    13 = Light Blue
+
+
+    ┌─────────────────────────────────────────────────┐
+    │ COLOUR STACK / COLOURED SQUARES MODE            │
+    │ 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00 │
+    │  ?  ?  a cF  t  n  n  n  n  n  n  n  n  f  f  f │
+    └─────────────────────────────────────────────────┘
+
+    where:
+
+      c        when set and bit #11 = 0, invokes coloured squares mode
+               for this card (see coloured squares).
+      a        if set, advances to next background colour on colour stack.
+      Ffff     foreground colour (on bits), pastels or primary (0 - 15).
+      t        is a toggle which tells the STIC where to grab the card from:
+               0 = GROM, 1 = GRAM
+      nnnnnnnn is the actual # of the card corresponding to it's position in
+               GRAM or GROM, (0 - 63) or (0 - 212).
+
+    ┌───────────────────────┐
+    │ COLOURED SQUARES MODE │
+    └───────────────────────┘
+      ┌───┬───┐
+      │ 1 │ 2 │
+      ├───┼───│
+      │ 3 │ 4 │
+      └───┴───┘
+    ┌─────────────────────────────────────────────────┐
+    │ 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00 │
+    │  ?  ?  4  c  0  4  4  3  3  3  2  2  2  1  1  1 │
+    └─────────────────────────────────────────────────┘
+      colours can range from 0 - 7, but when colour 7 is specified
+      the current colour on the colour stack is used instead of white.
+
+      c      must be 1 (coloured squares mode)
+      0      must be 0
+      111    colour for square at position 1
+      222    position 2
+      333    position 3
+      444    position 4
+
+
+
+
+SYSTEM RAM ├──────────────────────────────────────────────────────────────
+───────────┘
+
+The CPU and the STIC are linked together and served by the System RAM,
+the GI RA-3-9600. The System RAM is not just a simple dumb memory chip.
+It contains (1) 240 locations of information about the 240 background
+cards (BACKTAB), (2) 112 locations of simple 16-bit ram, used as the CPU
+stack and (3) a bus arbitration controller to control access to the
+Graphics ROM (GROM) and the Graphics RAM (GRAM), both of which are
+accessed by the CPU and the STIC (but never at the same time). The
+System RAM is crucial from the hardware point of view, but the timing
+features are transparent to the programmer.
+
+
+GENERAL INSTRUMENT RA-3-9600 │
+─────────────────────────────┘
+
+System RAM
+
+FEATURES
+
+* Memory area 352 words of 16 bits
+
+* Address counter and control logic for D.M.A. operation
+
+* Control decoder for CPU data control signals
+
+* Memory map comparator and control logic for additional memory on 14 bit bus
+
+* Current line buffer -- 20 words of 14 bits
+
+* Drive capability on 16 bit and 14 bit bus for 1 TTL load and 100pf
+
+FUNCTIONAL DESCRIPTION
+
+The RA-3-9600 is a dual port interface and 16 bit wide RAM storage area. The
+RA-3-9600 contains twenty 14 bit serial data buffer registers with separate
+bus control signals.
+
+The RA-3-9600 memory is 352 X 16 bit contiguous words from address 512-863 with
+the graphics descriptors using the first 240 words.The graphics use only the
+lower 14 bits of each word leaving the two most significant bits available for
+user storage.
+
+OPERATION DESCRIPTION
+
+The RA-3-9600 RAM accepts data from the CPU via a 16 bit bi-directional bus
+which is time multiplexed with address and data. A 3 bit control bus from
+the CPU is used to provide strobe signals for the on-chip address latch and
+main memory area.
+
+The RAM has two operating modes:
+
+Mode 1 -- On decoding an interrupt the RAM is enabled into a bus copy mode.
+In this mode the RAM copies the lower fourteen bits of the CPU bus onto the
+graphics bus. The direction of copy is always from the CPU and towards the
+graphics except during a bus reversal condition. The reversal condition is
+indicated when the CPU requests a read from an external graphics address on
+the 14 bit bus. Under this condition the 9600 will turn its 14 bit bus outputs
+into tri-state and gate the 14 bit bus through to the 16 bit CPU bus.
+                                          ─────
+Mode 2 -- is selected when the CPU issues BUSAK command (DMA request). The
+effect of BUSAK inside the 9600 is to reset the interrupt synchronizing logic
+and to switch the address decoder from the CPU address register to the graphics
+address counter. This counter, which sequences through the 240 words of
+graphics data, will have been previously set to zero when the interrupt signal
+was decoded. When the CPU is in the DMA state, the graphics system will
+prepare to display a new row of twenty characters and to load the 20 buffer
+registers within the 9600. For the first cycle of DMA after interrupt the
+graphic address counter will be at zero and the data at that address is passed
+to the 14 bit output. The action of SR3 will enable the output buffers and
+drive the 14 bit bus. The twenty shift registers are also loaded at this time.
+The negative edge of SR3 tri-status the 14 bit output and increments the
+graphic address counter. The shift registers are also clocked at this time.
+The SR3 input provides twenty positive pulses to the 9600 and loads the shift
+register buffers while giving the graphics the first row of characters. At the
+end of the first DMA cycle, after the CPU interrrupt, the graphics address
+counter will be at value 20. The 9600 operation for the next fifteen lines will
+be to clock the 20 shift registers and gate the contents onto the 14 bit bus
+under the control of the SR3 input. When the CPU is running and BUSAK is a
+logic 1, the graphics address counter is not incremented and it stays at the
+value 20. At the end of the first row of characters, the complete DMA operation
+is repeated and the address counter will be left at 40. This sequence occurs
+for the 12 rows of characters until all 240 have been sucessfully accessed.
+The operation of SR3, INCREMENT/TRI-STATE signal, is to step the shift register
+sequentially through each of the twenty characters. If the BUSAK signal is low,
+i.e., in DMA, it also increments the graphics ADDRESS COUNTER. SR3 disables the
+14 bit graphics bus during the low period.
+
+At the end of active picture the STIC issues an interrupt request to the CPU.
+The RA-3-9600 tests for the INTAK (INTAK equivalent BC1, BC2, BDIR = '1')
+response from the CPU and uses this signal as an entry control for a copy mode
+between the two buses. The end of the copy mode is controlled by the first
+BUSAK negative edge.
+
+
+GI RA-3-9600 Pin Configuration - 40 Lead Dual In Line│
+─────────────────────────────────────────────────────┘
+
+                         Top View
+                   ┌────────┬┬────────┐
+            DB6 ───┤ 1      └┘     40 ├──- SD6
+            DB7 ───┤ 2             39 ├─── SD5
+            SD7 ───┤ 3             38 ├──- DB5
+            SD8 ───┤ 4             37 ├─── DB4
+            DB8 ───┤ 5             36 ├──- SD4
+            DB9 ───┤ 6             35 ├─── SD3
+            SD9 ───┤ 7             34 ├──- DB3
+      (OMEGA) 2 ───┤ 8             33 ├─── DB2
+            Voc ───┤ 9             32 ├──- SD2
+            V?? ───┤ 10            31 ├─── V??
+            V?? ───┤ 11            30 ├──- DB1
+          BUSAK ───┤ 12 RA-3-9600  29 ├─── SD1
+            SR3 ───┤ 13  System    28 ├──- SD0
+            BC1 ───┤ 14    RAM     27 ├─── DB0
+            BC2 ───┤ 15            26 ├──- DB15
+           BDIR ───┤ 16            25 ├─── DB14
+           DB10 ───┤ 17            24 ├──- DB13
+           SD10 ───┤ 18            23 ├─── SD13
+           SD11 ───┤ 19            22 ├──- SD12
+           DB11 ───┤ 20            21 ├─── DB12
+                   └──────────────────┘
+
+
+SYSTEM RAM (16-bit) │
+────────────────────┘
+
+352 words total memory, mapped from 00200H-0035FH.
+
+BACKTAB information │
+────────────────────┘
+240 words, mapped from 00200H-002EFH.
+The background is organized of 12 rows of 20 columns of cards.
+The BACKTAB corresponds to each card by a word of data (12 x 20 = 240)
+as follows:
+
+  ┌───────────────────────────────────────────────────┐
+  │ FOREGROUND / BACKGROUND MODE                      │
+  │ 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00   │
+  │  ?  ?  B  b  t  b  b  n  n  n  n  n  n  f  f  f   │
+  └───────────────────────────────────────────────────┘
+
+where:
+
+bbbb     is the background colour (off bits), either pastel or primary
+         colours (0 - 15).
+t        is a toggle which tells the STIC where to grab the card from:
+         0 = GROM, 1 = GRAM
+nnnnnn   is the actual # of the card corresponding to it's position in
+         GRAM or GROM, (0 - 63).
+fff      is the foreground colour (on bits), primaries only (0 - 7).
+
+
+  
+SCRATCHPAD RAM │
+───────────────┘
+
+The scratchpad 256-by-8-bit static RAM chip (GTE 3539) is used by the
+exec and by the sound chip for temporary data storage. 147 bytes are
+left over for use by the game program to keep track of score, level,
+lives left, and other game variables.
+
+?? memory locations, at least partially mapped 0100H-01FFH (??)
+
+
+SOUND CHIP ├──────────────────────────────────────────────────────────────
+───────────┘
+
+The sound chip is a GI AY-3-8914. This chip contains three separate channels
+of sound, each channel of which can be individually controlled for frequency
+and volume. There is also a noise generator on the chip, which can be added
+to any of the three channels. All three channels are mixed, and fed to the
+sound output of the TV.
+
+
+
+Intellivision ROMs ├──────────────────────────────────────────────────────
+───────────────────┘
+
+
+GROM AND GRAM │
+──────────────┘
+
+Graphics ROM and the Graphics RAM (GROM and GRAM) are, in effect, character
+chips, storing shapes of images used on-screen. GRAM is programmable and
+GROM is not.
+
+GRAM has space for 64 program-defined 8 by 8 bit images. Both background and
+moving object images are stored here; since there can be up to 8
+double-resolution moving objects defined in GRAM, there are always at least
+64-(8*2)=48 background locations which the program can define.
+
+GROM contains 213 pre-defined 8 by 8 bit image locations (TRIVIA: it
+was intended to contain 256 images, but space was stolen for an
+overflow of system software from the EXEC ROM) which include numbers,
+upper and lower case alphabetic characters, punctuation, and graphics
+characters (triangles, lines and what-not).
+
+ For example, GROM location #37 contains the character E stored as:
+
+ 01111110
+ 01000000
+ 01000000
+ 01111110
+ 01000000
+ 01000000
+ 01111110
+ 00000000
+
+ The 240 BACKTAB locations each points to a location in GRAM or GROM.
+ For example, if BACKTAB location #1 points to GROM location #37, an E
+ will appear in the upper left corner of the screen.
+
+ BACKTAB contains other information on the display, such as foreground
+ and background colour, and whether the character is in GROM or GRAM.
+ Therefore, one GROM or GRAM image can be used to produce different
+ coloured images on different parts of the same screen (e.g. you can
+ have a white E on a black background on one part of the screen and a
+ red E on a blue background on a different part of the screen; both use
+ the same bit images pattern stored in GROM location #37).
+
+ GROM is a GI RO-3-9503 2K ROM. GRAM is made up of two GTE 3539
+ 256-byte static RAM chips.
+
+
+Address decoding is internal to ROM a full 16 bit addess is presented to
+the ROM, and the ROM decodes the full address apparently without
+shadowing.  Address and data lines are multiplexed, with BC1,BC2,BDIR
+selecting the bus phase.
+
+A word value is associated with each address. CPU instructions use 10 of
+the 16 bits, with the high order bits being ignored (usually 0).  From a
+cursory look at typical game carts, no 16 bit variable loads are
+performed from ROM.
+
+
+
+Graphics ROM [R0-3-9503 / 2048x8 ROM] │
+──────────────────────────────────────┘
+
+
+Features │
+─────────┘
+
+* Mask programmable storage providing 2048 * 8 bit words
+* 16 bit on-chip address latch
+* Memory map circuitry to place the 2K ROM page within a 64K memory area.
+* 16 bit tri-state bus with higher 8 bits driven to zero during read
+  operations.
+* 11 bit, static address outputs for external memory
+* Control signals for external memory (-ENABLE, R/-W)
+* Bus drive capability, 1 TTL load and 100pf plus tri-state.
+
+
+Operating description │
+──────────────────────┘
+
+The Graphics ROM operates in three memory configurations.  These
+configurations are selected via the input control signals.
+
+1. When SR1 has been pulsed low, the memory is located at 03000H-037FFH.
+   The external memory is addressed at 03800H-04000H.
+
+2. When -BUSACK has been pulsed low, the memory is located at 0-007FFH,
+   The external memory is addressed at 00800H-01000H.
+
+3. When BAR' and DWS' are pulsed positive, the memory will not respond
+   to address bit 9 and address bit 10, which restricts the memory to
+   512 locations.  The memory is now located from address 0-0001FFH.
+   The external memory is also addressable from 0-0001FFH relative to
+   its current origin.  Configuration three may be released by applying
+   a negative pulse on the SR1 input.
+
+
+In the Intellivision, the GROM/GRAM operates in Mode 1
+2048 memory locations, mapped 03000H-037FFH.
+     1,704 bytes (213 chars) of predefined 8x8 bitmaps
+     (alphabetic characters, punctuation, graphics, etc).
+     344 bytes overflow of Executive data (See section on the EXEC)
+
+
+               2048 bytes 8 bytes per tile, 8 bits wide
+                   tile number comes from backram
+                        ┌────────┬┬────────┐
+                 VCC ───┤ 1      └┘     40 ├─── R/-W
+                 SR1 ───┤ 2             39 ├─── -ENABLE
+              -BUSAK ───┤ 3             38 ├─── DWS
+          GND <- D15 ───┤ 4             37 ├─── DTB
+                [nc] ───┤ 5             36 ├─── BAR
+          GND <- D14 ───┤ 6             35 ├─── [nc]
+                 D13 ───┤ 7             34 ├─── D0
+                 D12 ───┤ 8             33 ├─── A0
+                 D11 ───┤ 9             32 ├─── D1
+            [nc] A10 ───┤ 10            31 ├─── A1
+                 D10 ───┤ 11            30 ├─── D2
+            [nc]  A9 ───┤ 12            29 ├─── A2
+                  D9 ───┤ 13            28 ├─── D3
+                  A8 ───┤ 14            27 ├─── A3
+                  D8 ───┤ 15            26 ├─── [nc]
+              -MSYNC ───┤ 16            25 ├─── D4
+                  A7 ───┤ 17            24 ├─── A4
+                  D7 ───┤ 18            23 ├─── D5
+                  A6 ───┤ 19            22 ├─── A5
+                  D6 ───┤ 20            21 ├─── GND
+                        └──────────────────┘
+
+
+Operation │
+──────────┘
+
+  The R0-3-9503 / 2048x8 ROM is designed to be connected to the STIC
+chip and provide STIC access to some pattern RAM.
+
+  The ROM chip uses two separate buses.  Each bus has its own control
+lines.  A conceptional diagram is shown below.
+
+                    ┌─ Bidirectional address/data bus
+                    │  16 bit address to GROM
+                    │  11 bits echoed back out A0-A10
+                    │   8 low order bits return data
+                    │   8 high order bits return 0
+                    │
+                    │     RAM DATA - Connected to D0-D7 via latch.
+                    │  ┌─────────────┐
+             ┌────┐ │  │   ┌────┐    │   ┌────┐
+             │    │ ▼  ▼   │    │    └───│    │
+             │STIC│ D0-D15 │GROM│ A0-A10 │GRAM│
+             │    │◄──────►│    │◄──────►│    │
+             │    │        │    │        │    │
+             │    │───────►│    │───────►│    │
+             │    │  CTRL  │    │  CTRL  │    │
+             └────┘   │    └────┘   │    └────┘
+                      ├─ SR1        │
+                      ├─ -BUSAK     ├─ R/-W
+                      ├─ DWS        └─ -ENABLE
+                      ├─ DTB
+                      └─ BAR
+
+D0-D15 - Bidirectional address/data bus.
+A0-A10 - Unidirectional address bus intended to connect to static RAM.
+
+┌──────────────────────────────────────────────────────────────────┐
+│ Bus timing                                                       │
+├──────────────────────────────────────────────────────────────────┤
+│           ┌─────┐             ┌─────┐                            │
+│ BAR ──────┘     └─────────────┘     └───────────────────         │
+│                 ┌─────┐                   ┌─────┐                │
+│ DTB ────────────┘     └───────────────────┘     └──────          │
+│                                           ┌─────┐                │
+│ DWS ──────────────────────────────────────┘     └──────          │
+│             ┌─────┐             ┌─────┐     ┌─────┐   ──┐        │
+│ DATA IN ────┴adrs─┴─────────────┴adrs─┴─────┴data─┴──── │ D0-D15 │
+│                     ┌─────┐                             │        │
+│ DATA OUT ───────────┴data─┴──────────────────────────── │        │
+│                                                       ──┘        │
+│ -Enable ────────────┐     ┌───────────────────┐     ┌──          │
+│                     └─────┘                   └─────┘            │
+│ -Write  ──────────────────────────────────────┐     ┌──          │
+│                                               └─────┘ ──┐        │
+│ External──┐    ┌──────────────┐   ┌──────────────────── │ A0-A10 │
+│ Address ──┴────┴──────────────┴───┴──────────────────── │        │
+│ Output                                                ──┘        │
+│                                                                  │
+└──────────────────────────────────────────────────────────────────┘
+
+
+                           WIRING FOR above
+                        ┌────────┬┬────────┐
+                 Vcc ───┤ 1      └┘ r/w 40 ├─── Tmmab Pin 10
+              -Intrm ───┤ 2     -enable 39 ├─── Tmmab Pin 8
+              -Busak ───┤ 3         dws 38 ├─── STIC DWS'
+        Tmmab pin 15 ───┤ 4 d15.    dtb 37 ├─── STIC DTB'
+                |nc| ───┤ 5         bar 36 ├─── STIC BAR'
+             ??? GND ───┤ 6 d14.        35 ├─── |nc|
+           STIC SD13 ───┤ 7 d13.    .d0 34 ├─── STIC Y0      Tmmb Pin 14
+           STIC SD12 ───┤ 8 d12.     a0 33 ├─── Tmmab pin 5
+           STIC SD11 ───┤ 9 d11.    .d1 32 ├─── STIC Y1      Tmmb Pin 13
+                |nc| ───┤ 10 a11     a1 31 ├─── Tmmab Pin 6
+           STIC SD10 ───┤ 11 d10.   .d2 30 ├─── STIC Y2      Tmmb Pin 12
+                |nc| ───┤ 12 a9      a2 29 ├─── Tmmab pin 7
+            STIC SD9 ───┤ 13 d9.    .d3 28 ├─── STIC SD3     Tmmb Pin 11
+        Tmmab Pin 16 ───┤ 14 a8      a3 27 ├─── Tmmab Pin 4
+            STIC SD8 ───┤ 15 d8.        26 ├─── |nc|
+         STIC -MSYNC ───┤ 16 -msync .d4 25 ├─── STIC SD4     Tmma Pin 14
+        Tmmab pin 17 ───┤ 17 a7      a4 24 ├─── Tmmab pin 3
+Tmma Pin 11 STIC SD7 ───┤ 18 d7.    .d5 23 ├─── STIC SD5     Tmma Pin 13
+        Tmmab pin 1  ───┤ 19 a6      a5 22 ├─── Tmmab pin 2
+Tmma Pin 12 STIC SD6 ───┤ 20 d6.        21 ├─── GND
+                        └──────────────────┘
+
+
+
+Latches used to connect GRAM data bus to  ├───────────────────────────────────
+GROM Address/Data bus.                    │
+──────────────────────────────────────────┘
+
+                ╔══════════════════════════════════════╗
+                ║        TmmA                          ║
+                ║       ┌──A──┐                        ║
+   ROM A6       ║  ┌── ─┤1  18├─ Vcc                   ║
+   ROM A5       ╠══┼── ─┤2  17├─ ──────────────────────╢ ROM a7
+   ROM A4       ║  ├── ─┤3  16├─ ──────────────────────╢ ROM a8
+   ROM A3       ║  ├── ─┤4  15├─ ──────────────────────╢ ROM d8
+   ROM A0       ║  ├── ─┤5  14├─ ── STIC SD4  ROM D4   ║
+   ROM A1       ║  ├── ─┤6  13├─ ── STIC SD5  ROM D5   ║
+   ROM A2       ║  ├── ─┤7  12├─ ── STIC SD6  ROM D6   ║
+   ROM -ENABLE  ║  └── ─┤8  11├─ ── STIC SD7  ROM D7   ║
+                ║  Gnd ─┤9  10├─ ──────────────────────╢ ROM R/-W
+                ║       └─────┘                        ║
+                ║                                      ║
+                ║        TmmB                          ║
+                ║       ┌──B──┐                        ║
+                ║  ┌── ─┤1  18├─ Vcc                   ║
+                ╚══┼── ─┤2  17├─ ──────────────────────╢ ROM a7
+                   ├── ─┤3  16├─ ──────────────────────╢ ROM a8
+                   ├── ─┤4  15├─ ──────────────────────╢ ROM d8
+                   ├── ─┤5  14├─ ── STIC Y0  ROM D0    ║
+                   ├── ─┤6  13├─ ── STIC Y1  ROM D1    ║
+                   ├── ─┤7  12├─ ── STIC Y2  ROM D2    ║
+                   └── ─┤8  11├─ ── STIC SD3 ROM D3    ║
+                   Gnd ─┤9  10├─ ──────────────────────╜ ROM R/-W
+                        └─────┘
+
+
+Graphics RAM [R0-3-9503 / 2048x8 ROM] ├───────────────────────────────────────
+──────────────────────────────────────┘
+
+GRAM (8-bit) │
+─────────────┘
+  512 memory locations, mapped from 03800H-038FFH.
+  Stores up to 64 (8 x 8 bit) images for moving objects or the background.
+
+                        ┌────────┬┬────────┐
+                     ───┤ 1      └┘     40 ├───
+                     ───┤ 2             39 ├───
+                     ───┤ 3             38 ├───
+                     ───┤ 4             37 ├───
+                     ───┤ 5             36 ├───
+                     ───┤ 6             35 ├───
+                     ───┤ 7             34 ├───
+                     ───┤ 8             33 ├───
+                     ───┤ 9             32 ├───
+                     ───┤ 10            31 ├───
+                     ───┤ 11            30 ├───
+                     ───┤ 12            29 ├───
+                     ───┤ 13            28 ├───
+                     ───┤ 14            27 ├───
+                     ───┤ 15            26 ├───
+                     ───┤ 16            25 ├───
+                     ───┤ 17            24 ├───
+                     ───┤ 18            23 ├───
+                     ───┤ 19            22 ├───
+                     ───┤ 20            21 ├───
+                        └──────────────────┘
+
+
+
+                                                               
+THE EXEC ├─────────────────────────────────────────────────────────────────
+─────────┘
+
+The whole system is controlled by a 4K program called the Executive (the
+exec) which resides in the Intellivision's Executive ROM chip (with an
+additional 344 bytes over in the GROM chip). In a sense, the exec is the
+main game program, and the plug-in cartridge merely contains subroutines
+and data which are used by the exec. Normally, only EXEC routines access
+GROM, GRAM and the STIC control registers. The EXEC contains routines
+for moving objects around the screen, loading GRAM, creating sound and
+music, testing for moving object interaction, etc. The EXEC was written
+for Mattel Electronics by APh Technology Consultants. [Note: In the
+Intellivision, the Executive ROM is physically two 2K chips, a GI
+RO-3-9502 and a GI RO-3-9504; in the Intellivision II it is a single 4K
+GI RO-3-9506 chip.]
+   
+EXEC ROM (10-bit) 4096 words of code, mapped 01000H-01FFFH (??).
+
+Q. In the Intellivision II, it looks to me like the GROM is connected to
+   the STIC on an alternate bus, separate from the CPU bus. How is
+   program code therefore located in the GROM ?
+
+A. Code associated with initializing the game is located there. It is
+   read into BACKTAB (directly from GROM to System RAM) as if it were
+   screen graphics, then the CPU executes the code from the BACKTAB
+   locations. During this process, the STIC is disabled so that the
+   screen is kept black for the 1/20 second this takes, otherwise you'd
+   see a flash of a screen filled with colourful gibberish.  Normally
+   this only happens right after you hit reset, but some games
+   reinitialize between major "phases," such as between the two halves
+   of my game, TRON Solar Sailer, which use different graphic sets for
+   the two halves.
+
+
+"The RO-3-9502 is initialized by the MSYNC input and from the positive
+edge of this signal. It remains in a tri-state output condition,
+awaiting the IAB response. During the IAB the 9502 transmits a 16-bit
+code onto the external bus, thus providing the system start address
+vector. The completion of the MCLR sequence is recorded on the chip such
+that any further IAB codes output the second interrupt vector.
+
+From initialization, the 9502 waits for the first address code. For this
+address code and all subsequent address sequences, the 9502 reads the
+16-bit external bus and latches the value into its address register. The
+contents of this address register are made available for connection to
+external memory and are supplied on 16 latched outputs with a drive
+capacity of 1 TTL load and 100pF.
+
+The 9502 contains a programmable memory map location for its own 2K page
+and if a valid address is detected, the particular addressed location
+will transfer its contents to the chip output buffers.
+
+If the control code following the address cycle was a Read, the 9502
+will output the 10 bits of addressed data and also drive a logic zero on
+the top six bits of the bus.
+
+The 16 bits from the address register are produced as static outputs for
+connection to external ROM or RAM devices.
+
+Two other signals are provided to control the external memory area. An
+enable signal is provided for any read or write operation, and a write
+signal for any move out operation. The two external memory control
+signals are gated by a min-max memory map comparator. The minimum and
+maximum values are programmable on boundaries within the 65K word memory
+area."
+
+
+
+                   40 pin ROM (EXEC)
+                 ┌────────┬┬────────┐
+         VCC  ───┤ 1      └┘     40 ├─── STIC pin 7   BC1
+314APLB pin 8 ───┤ 2             39 ├─── STIC pin 6   BC2
+214AplAB Pin 10 ─┤ 3             38 ├─── STIC pin 8   BDIR
+           ?  ───┤ 4             37 ├─── D0
+         D15  ───┤ 5             36 ├─── |nc|
+         |nc| ───┤ 6             35 ├─── D1
+         D14  ───┤ 7             34 ├─── |nc|
+         |nc| ───┤ 8             33 ├─── D2
+         D13  ───┤ 9             32 ├─── |nc|
+         |nc| ───┤ 10            31 ├─── D3
+         D12  ───┤ 11            30 ├─── |nc|
+         |nc| ───┤ 12  RO-3-9502 29 ├─── D4
+         D11  ───┤ 13  -011 ROM  28 ├─── |nc|
+         |nc| ───┤ 14            27 ├─── D5
+         D10  ───┤ 15            26 ├─── |nc|
+         |nc| ───┤ 16            25 ├─── D6
+         D9   ───┤ 17            24 ├─── |nc|
+         |nc| ───┤ 18            23 ├─── D7
+         D8   ───┤ 19            22 ├─── |nc|
+       -MSYNC ───┤ 20            21 ├─── GND
+                 └──────────────────┘
+
+Note: The above 40 pin chip also apparently contains interrupt logic,
+      although at this point it is unclear how or why this is done.
+
+
+
+       Address decoding is internal to ROM (see above)
+                   28 pin ROM EXEC or CART
+                 ┌────────┬┬────────┐
+          VCC ───┤ 1      └┘     28 ├─── STIC pin 7   BC1
+         |nc| ───┤ 2             27 ├─── STIC pin 6   BC2
+         |nc| ───┤ 3             26 ├─── STIC pin 8   BDIR
+          D15 ───┤ 4             25 ├─── D0
+         |nc| ───┤ 5             24 ├─── D1
+          D14 ───┤ 6             23 ├─── D2
+          D13 ───┤ 7             22 ├─── |nc|
+          D12 ───┤ 8             21 ├─── D3
+          D11 ───┤ 9             20 ├─── D4
+          D10 ───┤ 10            19 ├─── D5
+         |nc| ───┤ 11            18 ├─── |nc|
+           D9 ───┤ 12            17 ├─── D6
+           D8 ───┤ 13            16 ├─── D7
+       -MSYNC ───┤ 14            15 ├─── GND
+                 └──────────────────┘
+
+Note: In the Intellivision II the entire EXEC is integrated into one 4K
+      40 pin ROM.
+
+
+
+SUBROUTINES ├──────────────────────────────────────────────────────────────
+────────────┘
+
+The following EXEC subroutines were reverse engineered by Carl Mueller
+BEFORE he had ever seen the Executive code. More accurate and complete
+information to follow soon:
+
+01668H Extend sign from low byte of R0 into full word.
+
+01DDCH Fixed point multiply, R0 and R2.  Result in R2.
+
+01DFBH Fixed point divide.  Dividend is R1, divisor is R2. Quotient
+       placed in R0, remander placed in R1.
+
+01738H Zeros memory.
+       R0 = count
+       R4 = address
+
+01741H Fills memory with value in R1.
+       R0 = count
+       R1 = value
+       R4 = address
+
+01777H R1 = start addr.
+       Returns:
+       R2 = x.pos
+       R3 = y.pos
+
+018C5H Write a numeric string, padded with spaces on the left instead of
+       0 digits.  R4 is positioned at the begining of where the numeric
+       was written to, instead of positioned just after.
+       R0 = numeric value
+       R1 = number of digits
+       R3 = attribute word (same as BACKTAB word format)
+       R4 = destination address to write to (i.e. BACKTAB location)
+
+018ADH Write a numeric string like 018C5H, but pad with 0's.
+       R0 = numeric value
+       R1 = number of digits
+       R3 = attribute word (same as BACKTAB word format)
+       R4 = destination address to write to (i.e. BACKTAB location)
+
+01867H Same as 0187BH, except you can specify an address from where to
+       fetch the string data.  The address is incremented to point to
+       the character after the null terminator, but is placed in R5.
+       R1 = address of string data, which must end with a null
+            terminating character (0).
+       R3 = attribute word (same as BACKTAB word format)
+       R4 = destination address to write to (i.e. BACKTAB location)
+
+0187BH Write a string of words to a memory location (such as BACKTAB).
+       The string of words must follow the JSR instruction, and must
+       end with a null-terminated word (0h).  The R7 register will be
+       automatically incremented to start running the instruction
+       right after the null-terminated word.
+       R3 = attribute word (same as BACKTAB word format)
+       R4 = destination address to write to (i.e. BACKTAB location)
+
+01B95H Possibly triggers a "stock" sound effect.
+       Parameter is passed as a string of words after the JSR instruction,
+       and is terminated by a null-terminated word. The R7 register will
+       be automatically incremented to start running the instruction
+       right after the null-terminated word.
+
+01BBEH Possibly generates a noise envelope.  The data is passed after the
+01BBBH JSR instruction, and the R7 register is automatically incremented
+       to start running the instruction right after a null-terminated word
+       of 002CFH (??).
+
+
+
+SPECIAL MEMORY LOCATIONS │
+─────────────────────────┘
+
+HEADER (memory addresses are stored lo, hi)
+──────
+05000H Moving object graphics address, used for exec-assisted animation.
+       Also used by the "SUCKY" feature on the ECS.
+05002H Pointer to "periodically called routine" table.
+05004H Start program address (after title screen).
+05006H Pointer to background graphics (?)
+05008H ??
+0500AH Pointer to title screen and copyright date, first word is the
+       year, then follows the title in ASCII terminated by a 0.
+       The code after may be called for additions to the title screen.
+0500CH if bit #7 set, run code directly after title string null word.
+0500DH moved into 00032H (block out h/v card rows)
+0500EH graphics mode
+0500FH + cs_element = colour
+05013H border colour
+
+    ...
+
+
+Mattel Intellivision Cartridge Port │
+────────────────────────────────────┘
+
+Motherboard  CART ROM  TOP       BOTTOM        CART ROM  Motherboard
+                             #       #
+??           NC         ?? - 2       1-GND      GND       GND
+STIC Pin 19  NC         ?? - 4       3--MSYNC   Pin 14    CPU pin 2
+Matl Pin 7   NC         ?? - 6       5-D7       Pin 16    CPU pin 16
+STIC Pin 9   GND        ?? - 8       7-D8       Pin 13    CPU pin 13
+STIC Pin 15* GND        ?? -10       9-D6       Pin 17    CPU pin 17
+Supply ??    GND        ?? -12      11-D9       Pin 12    CPU pin 12
+CPU INTRM    NC        INT -14      13-D5       Pin 19    CPU pin 18
+                       GND -16 ─┐M  15-D10      Pin 10    CPU pin 11
+                       GND -18 ─┤T  17-D4       Pin 20    CPU pin 19
+                       GND -20 ─┤H  19-D11      Pin 9     CPU pin 10
+                       GND -22 ─┤R  21-D3       Pin 21    CPU pin 20
+                       GND -24 ─┤B  23-D12      Pin 8     CPU pin 9
+                       GND -26 ─┤R  25-D13      Pin 7     CPU pin 8
+                       GND -28 ─┘D  27-D2       Pin 23    CPU pin 11
+CPU BUSAK    NC         ?? -30      29-D14      Pin 6     CPU pin 7
+┌─STIC BC1   ────  ┌─── *1 -32      31-D1       Pin 24    CPU pin 15
+│ STIC BC2   ──── C│┌── *2 -34      33-D0       Pin 25    CPU pin 14
+│ STIC BDIR  ──── A││┌─ *3 -36 SLOT 35-D15      Pin 4     CPU pin 6
+│ Mattel Pin 10   R││└─ *3 -38 ─────37-*3       Pin 26    STIC Pin 8
+│ Mattel Pin 12   T│└── *2 -40 ────-39-*2       Pin 27    STIC Pin 6
+├─Mattel Pin 14    └─── *1 -42 ─────41-*1       Pin 28    STIC Pin 7
+│ GND        GND        GND-44      43-VCC      PIN       VCC
+│
+└─Timing Read/Write etc.
+
+* STIC pin 15 tied to connector through resistor?  Pullup?
+
+*1 ............ STIC pin 7  BC1
+*2 ............ STIC pin 6  BC2
+*3 ............ STIC pin 8  BDIR
+
+All *x pins are connected; cartridges have a loop on the top row
+connecting them, and the connector in the Intellivision unit connects
+the top row *x pins to those on the bottom row.  Internally, *x pins are
+connected as follows:
+
+There may be other connections to them as well; I don't know why they
+connect to the ROM pins.  However, considering the system changer's
+ability to route in external video, having pins going to the STIC seems
+to make some sense. I suspect that they may switch the ROM from address
+write mode to data read mode (like the three bus control lines on the
+CPU, maybe).
+
+
+
+                           - Mattel LAD -
+                        ┌────────┬┬────────┐
+To VDD through Diode ───┤ 1      └┘     16 ├─── VCC ?
+         STIC Pin 10 ───┤ 2             15 ├──- BC1 from CPU
+     CPU clock PH1   ───┤ 3             14 ├─── STIC pin 7 BC1
+         STIC Pin 11 ───┤ 4             13 ├──- BC2 from CPU
+     CPU clock PH2   ───┤ 5             12 ├─── STIC pin 6 BC2
+12 V through diode ? ───┤ 6             11 ├──- BDIR
+         sound       ───┤ 7             10 ├─── STIC Pin 8 BDIR
+               GND ? ───┤ 8              9 ├──- GND ?
+                        └──────────────────┘    Right top under supply
+
+
+
+This is based on an Imagic 2764 EPROM-based circuit board
+────────────────────────────────────────────────────────-
+Latch2 - 74LS374 (U4) ─┬ Octal Latch
+Latch1 - 74LS374 (U5) ─┘
+138    - 74LS138 (U6)    3-8 Decoder
+00     - 74LS00  (U7)    Quad Nand
+04     - 74LS04  (U8)    Hex Inverter
+86     - 74S86   (U3)    Quad 2 input XOR Gate
+
+ 2 - NC           1 - GND   TO PIN THROUGH         TO           PIN
+ 4 - NC           3 - NC
+ 6 - NC           5 - D7  * [Pin #18 Latch 1]  -> [EPROM 1 = D7 Pin #19 ]
+ 8 - GND          7 - D8  * [Pin #3  Latch 2]  -> [EPROM 2 = D0 Pin #11 ]
+10 - GND          9 - D6  * [Pin #17 Latch 1]  -> [EPROM 1 = D6 Pin #18 ]
+12 - GND         11 - D9  * [Pin #4  Latch 2]  -> [EPROM 2 = D1 Pin #12 ]
+14 - NC          13 - D5  * [Pin #14 Latch 1]  -> [EPROM 1 = D5 Pin #17 ]
+16 - GND         15 - D10 * [Pin #7  Latch 2]  -> [EPROM 2 = D2 Pin #13 ]
+18 - GND         17 - D4  * [Pin #13 Latch 1]  -> [EPROM 1 = D4 Pin #16 ]
+20 - GND         19 - D11 * [Pin #8  Latch 2]  -> [EPROM 2 = D3 Pin #15 ]
+22 - GND         21 - D3  * [Pin #8  Latch 1]  -> [EPROM 1 = D3 Pin #15 ]
+24 - GND         23 - D12 * [Pin #13 Latch 2]  -> [EPROM 2 = D4 Pin #16 ]
+26 - GND         25 - D13 * [Pin #14 Latch 2]  -> [EPROM 2 = D5 Pin #17 ]
+28 - GND         27 - D2  * [Pin #7  Latch 1]  -> [EPROM 1 = D2 Pin #13 ]
+30 - NC          29 - D14 * [Pin #17 Latch 2]  -> [EPROM 2 = D6 Pin #18 ]
+32 - (BC1 ) ──┐  31 - D1  * [Pin #4  Latch 1]  -> [EPROM 1 = D1 Pin #12 ]
+34 - (BC2 ) ─┐│  33 - D0  * [Pin #3  Latch 1]  -> [EPROM 1 = D0 Pin #11 ]
+36 - (BDIR) ┐││  35 - D15   [Pin #18 Latch 2]  -> [EPROM 2 = D7 Pin #19 ]
+38 - ───────┘│├─ 37 - #3    [138] ─┐
+40 - ────────┘├─ 39 - #2    [138]  ├─ 3 to 8 decoder
+42 - ─────────┴─ 41 - #1    [138] ─┘
+44 - GND         43 - VCC
+
+
+
+                        74LS374
+                    Octal Latch #1
+                    ┌─────┬┬─────┐
+TO CART PORT  -oc ──┤ 1   └┘  20 ├── Vcc   TO CART PORT
+               Q1 ──┤ 2       19 ├── Q8
+PIN 33 = D0    D1 ──┤ 3       18 ├── D8    PIN 5 = D7
+PIN 31 = D1    D2 ──┤ 4       17 ├── D7    PIN 9 = D6
+               Q2 ──┤ 5       16 ├── Q7
+               Q3 ──┤ 6       15 ├── Q6
+PIN 27 = D2    D3 ──┤ 7       14 ├── D6    PIN 13 = D5
+PIN 21 = D3    D4 ──┤ 8       13 ├── D5    PIN 17 = D4
+               Q4 ──┤ 9       12 ├── Q5
+              GND ──┤ 10      11 ├── CLK
+                    └────────────┘
+
+                        74LS374
+                    Octal Latch #2
+                    ┌─────┬┬─────┐
+TO CART PORT  -oc ──┤ 1   └┘  20 ├── Vcc    TO CART PORT
+               Q1 ──┤ 2       19 ├── Q8
+PIN  7 = D8    D1 ──┤ 3       18 ├── D8     PIN 35 = D15
+PIN 11 = D9    D2 ──┤ 4       17 ├── D7     PIN 29 = D14
+               Q2 ──┤ 5       16 ├── Q7
+               Q3 ──┤ 6       15 ├── Q6
+PIN 15 = D10   D3 ──┤ 7       14 ├── D6     PIN 25 = D13
+PIN 19 = D11   D4 ──┤ 8       13 ├── D5     PIN 23 = D12
+               Q4 ──┤ 9       12 ├── Q5
+              GND ──┤ 10      11 ├── CLK
+                    └────────────┘
+
+
+
+EPROM 2 (2764) Pinout │
+──────────────────────┘
+                            ┌───────┐
+                 VCC - Vpp ─┤ 1   28├─ Vcc - VCC           "$" - Connected to
+$ [1Y] [04     ] #2  - A12 ─┤ 2   27├─ PGM - VCC                 like pins on
+$ [8Q] [Latch 2] #19 - A7  ─┤ 3   26├─ NC  - VCC                 EPROM 1
+$ [7Q] [Latch 2] #16 - A6  ─┤ 4   25├─ A8  - #2  [Latch 1] [1Q] $
+$ [6Q] [Latch 2] #15 - A5  ─┤ 5   24├─ A9  - #5  [Latch 1] [2Q] $
+$ [5Q] [Latch 2] #12 - A4  ─┤ 6   23├─ A11 - #9  [Latch 1] [4Q] $
+$ [4Q] [Latch 2] #9  - A3  ─┤ 7   22├─ -OE - #6  [04     ] [3Y] $
+$ [3Q] [Latch 2] #6  - A2  ─┤ 8   21├─ A10 - #6  [Latch 1] [3Q] $
+$ [2Q] [Latch 2] #5  - A1  ─┤ 9   20├─ -CE - #8  [00     ] [3Y] $
+$ [1Q] [Latch 2] #2  - A0  ─┤10   19├─ D7  - #18 [Latch 1] [8D] & [EC #35]
+  [1D] [Latch 1] #3  - D0  ─┤11   18├─ D6  - #17 [Latch 1] [7D]
+  [2D] [Latch 1] #4  - D1  ─┤12   17├─ D5  - #14 [Latch 1] [6D]
+  [3D] [Latch 1] #7  - D2  ─┤13   16├─ D4  - #13 [Latch 1] [5D]
+                 GND - GND ─┤14   15├- D3  - #8  [Latch 1] [4D]
+                            └───────┘
+
+
+                    - 2764 Eprom -
+                   ┌──────┬┬──────┐
+      VCC - VPP ───┤ 1    └┘   28 ├─── VCC  - VCC
+         ┌─ A12 ───┤ 2         27 ├─── PGM  - VCC Program
+         │   A7 ───┤ 3         26 ├─── [nc] - VCC
+         │   A6 ───┤ 4         25 ├─── A8  ─┐
+         │   A5 ───┤ 5         24 ├─── A9   ├─ Address
+Address ─┤   A4 ───┤ 6         23 ├─── A11 ─┘
+         │   A3 ───┤ 7         22 ├─── -OE ── Output Enable
+         │   A2 ───┤ 8         21 ├─── A10 ─  Address
+         │   A1 ───┤ 9         20 ├─── -CE ── Chip Enable
+         └─  A0 ───┤ 10        19 ├─── D7 ──┐
+         ┌─  D0 ───┤ 11        18 ├─── D6   │
+ Data   ─┤   D1 ───┤ 12        17 ├─── D5   ├─ Data
+         └─  D2 ───┤ 13        16 ├─── D4   │
+            GND ───┤ 14        15 ├─── D3 ──┘
+                   └──────────────┘
+
+
+GENERAL INSTRUMENT RO-3-9504 ├───────────────────────────────────────────────
+─────────────────────────────┘
+
+Cartridge ROM
+
+FEATURES
+
+* Mask programmable storage providing 2048 X 8 bit words
+
+* 16 bit on-chip address latch
+
+* Memory map circuitry to place the 2K ROM page withing a 65K Memory area
+
+* 16 bit tri-state bus with higher 6 bits driven to zero during read operations
+
+CIRCUIT REQUIREMENTS
+
+The RO-3-9504 operates as the program memory for systems using a CP1610
+microprocessor. It is configured as 2048 X 10 bit words and contains several
+features which reduce the device count in a practical microprocessor
+application.
+
+DESCRIPTION
+
+From initialization, the RO-3-9504 waits for the first address code.
+i.e., BAR. For this address code and all subsequent address sequences, the
+9504 reads the 160bit external bus and latches the value into its address
+register.
+
+The 9504 contains a programable memory map location for its own 2K page,
+and if a valid address is detected, the particular address location will
+transfer its contents to the chip output buffers. If the control code
+follwoing the address cycle was a READ, the 9504 will output the 10 bits
+of addressed data and drive a logic zero on the top six bits of the bus:
+
+
+┌───────────────────────┐
+│INPUT CONTROL SIGNALS  │
+├──────┬───────┬──────┬─┴────────────────────┬────────────────┐
+│ BDIR │ BC1   │ BC2  │  EQUIVALENT SIGNAL   │   RESPONSE     │
+├──────┼───────┼──────┼──────────────────────┼────────────────┤
+│  0   │  0    │  0   │  NACT                │   NACT         │
+├──────┼───────┼──────┼──────────────────────┼────────────────┤
+│  0   │  0    │  1   │  IAB                 │   NACT         │
+├──────┼───────┼──────┼──────────────────────┼────────────────┤
+│  0   │  1    │  0   │  ADAR                │   ADAR         │
+├──────┼───────┼──────┼──────────────────────┼────────────────┤
+│  0   │  1    │  1   │  DTB                 │   DTB(READ)    │
+├──────┼───────┼──────┼──────────────────────┼────────────────┤
+│  1   │  0    │  0   │  BAR                 │   BAR          │
+├──────┼───────┼──────┼──────────────────────┼────────────────┤
+│  1   │  0    │  1   │  DWS                 │   -            │
+├──────┼───────┼──────┼──────────────────────┼────────────────┤
+│  1   │  1    │  0   │  DW                  │   -            │
+├──────┼───────┼──────┼──────────────────────┼────────────────┤
+│  1   │  1    │  1   │  INTAK               │   -            │
+└──────┴───────┴──────┴──────────────────────┴────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ MEMORY TIMING RO-3-9504                                                     │
+│               ┌───────┐       ┌───────┐      ┌───────┐       ┌───────┐      │
+│  CONTROL CODE │       │       │       │      │       │       │       │      │
+│         ──────┘ADDRESS└───────┘ READ  └──────┘ADDRESS└───────┘ WRITE └───   │
+│                                                                             │
+│                                                                             │
+│                                                                             │
+│            Tas──|◄───►|Tso|◄──                            Tws───|◄──►|Two|◄ │
+│                 ┌─────────┐                    ┌────────┐       ┌────────┐  │
+│DATA IN  ────────┤         ├────────────────────┤        ├───────┤        ├─ │
+│                 └─────────┘                    └────────┘       └────────┘  │
+│                               Tda                                           │
+│                            ──►| |◄─ ─►|Tdo|◄                                │
+│                               ┌───────────┐                                 │
+│DATA OUT ──────────────────────┤           ├───────────────────────────────  │
+│                               └───────────┘                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+ELECTRICAL CHARACTERISTICS
+
+Maximum Ratings
+
+Note: Exceeding these ratings could cause permanent damage to the device. This
+is a stress rating only and functional operation of this device at these
+conditions is not implied -- operating ranges are specified in Standard
+Conditions. Exposure to absolute maximum rating conditions for extended periods
+may affect device reliablility. Data labeled "typical" is presented for design
+guidance only and is not guaranteed.
+
+Temperature Under Bias................................0 (Degrees) C to +40C
+Storage Temperature...................................-55C to +150C
+All Input or Output Voltages with Respect to V??........-0.2V to +9.0V
+Voc with Respect to V?s.................................-0.2V to +9.0V
+
+Standard Conditions (unless otherwise noted)
+
+Ta =0(Deg.) C to +40C
+Vcc = +4.85V - + 5.15V
+Vss = O.OV
+
+
+┌──────────────────────┬────┬────┬────┬─────┬──────┬───────────────────────┐
+│  Characteristic      │Sym │Min │Typ │Max  │Units │      Conditions       │
+├──────────────────────┼────┴────┴────┴─────┴──────┴───────────────────────┤
+│DC CHARACTERISTICS    │                                                   │
+│                      │                                                   │
+│INPUTS                │                                                   │
+├──────────────────────┼────┬────┬────┬─────┬──────┬───────────────────────┤
+│Input Logic Low       │Vil │ 0  │ -  │ 0.7 │volts │                       │
+├──────────────────────┼────┼────┼────┼─────┼──────┼───────────────────────┤
+│Input Logic High      │Vih │ 2.4│ -  │ Vcc │volts │                       │
+├──────────────────────┼────┼────┼────┼─────┼──────┼───────────────────────┤
+│Input Leakage         │Vil │ -  │ -  │ 10  │ uA   │ Vih = Voc             │
+├──────────────────────┼────┴────┴────┴─────┴──────┴───────────────────────┤
+│CPU BUS Outputs       │                                                   │
+├──────────────────────┼────┬────┬────┬─────┬──────┬───────────────────────┤
+│Output Logic Low      │Vol │ 0  │ -  │ 0.5 │volts │ 1 TTL Load            │
+├──────────────────────┼────┼────┼────┼─────┼──────┼───────────────────────┤
+│Output Logic High     │Voh │ 2.4│ -  │ Vcc │volts │ +100pf                │
+├──────────────────────┼────┴────┴────┴─────┴──────┴───────────────────────┤
+│SUPPLY CURRENT        │                                                   │
+├──────────────────────┼────┬────┬────┬─────┬──────┬───────────────────────┤
+│Vcc Supply            │Icc │ -  │ -  │ 120 │ mA   │ Vcc = 5.25V @ 40(Deg)C│
+├──────────────────────┼────┴────┴────┴─────┴──────┴───────────────────────┤
+│AC CHARACTERISTICS    │                                                   │
+│                      │                                                   │
+│INPUTS                │                                                   │
+├──────────────────────┼────┬────┬────┬─────┬──────┬───────────────────────┤
+│Address Set Up        │Tas │ 300│ -  │  -  │ ns   │                       │
+├──────────────────────┼────┼────┼────┼─────┼──────┼───────────────────────┤
+│Address Overlap       │Tao │ -  │ 50 │  -  │ ns   │                       │
+├──────────────────────┼────┼────┼────┼─────┼──────┼───────────────────────┤
+│Write Set Up          │Tws │ 300│ -  │  -  │ ns   │                       │
+├──────────────────────┼────┼────┼────┼─────┼──────┼───────────────────────┤
+│Write Overlap         │Two │ -  │ 50 │  -  │ ns   │                       │
+├──────────────────────┼────┴────┴────┴─────┴──────┴───────────────────────┤
+│CPU BUS Outputs       │                                                   │
+├──────────────────────┼────┬────┬────┬─────┬──────┬───────────────────────┤
+│Turn ON Delay         │Tda │ -  │ -  │ 300 │ ns   │ 1 TTL Load            │
+├──────────────────────┼────┼────┼────┼─────┼──────┼───────────────────────┤
+│Turn OFF Delay        │Tdo │ -  │ -  │ 200 │ ns   │ +100pf                │
+└──────────────────────┴────┴────┴────┴─────┴──────┴───────────────────────┘
+In the Intellivision I, the following chips have heat sinks mounted to
+their tops hiding their serial numbers.
+
+STIC .............. AY-3-8900-1 .............. 40-pin
+RAM ............... RA-3-9600 ................ 40-pin  704 bytes
+CPU ............... CP-1610 .................. 40-pin
+
+
+Note: Crystal frequencey = 7.15909 Mhz for both the Intellivision I and
+      the Intellivision II
+
+Note: Joysticks appear to be connected through sound chip (parallel
+      port)
+
+
+
+
+
+General Instrument AY-3-8915 Colour Processor Chip ├────────────────────────
+───────────────────────────────────────────────────┘
+
+
+Features
+
+* Operation from 7.15909MHz crystal
+
+* Five-line digital selection for 1 of 16 colours, blanking, sync
+  and colour burst
+
+* 3.579545MHz buffered output
+
+DESCRIPTION
+
+The required colour to be displayed for each 280ns PIXEL is decoded on a four
+line binary coded input. This selects one of sixteen possible colours. An
+external resistor network completes the D to A function as shown in the
+schematic of Fig 1. The waveform plus table illustrates the use of the five
+inputs to produce composite sync, colour burst, line blanking, frame blanking
+and video.
+
+The external video input pin provides the ability to superimpose white high
+resolution (140ns wide) video information over the picture (colour image).
+
+
+
+┌───────────────┬────────────────────┬───────────────────────────────────┐
+│  INPUT CODE   │ TIME SLOT RELATIVE │         COLOUR OUTPUT             │
+│  ASSIGNMENT   │ VOLTAGE AMPLITUDES │          DESCRIPTION              │
+├──┬──┬──┬──┬───┼────┬────┬────┬─────┼───────────────────────────────────┤
+│V5│V4│V3│V2│V1 │ +Q │ -I │ -Q │ +I  │                                   │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼───────────────────────────────────┤
+│0 │0 │0 │0 │0  │  3 │  3 │  3 │  3  │  Black        ───┐                │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼──────────────────┤                │
+│0 │0 │0 │0 │1  │  5 │ 13 │  9 │  1  │  Blue            │                │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼──────────────────┤                │
+│0 │0 │0 │1 │0  │  8 │  0 │  4 │ 12  │  Red             │                │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼──────────────────┤                │
+│0 │0 │0 │1 │1  │  4 │  4 │ 12 │ 12  │  Tan             │                │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼──────────────────┼─── GROUP "A"   │
+│0 │0 │1 │0 │0  │  3 │  8 │ 11 │  8  │  Grass Green     │                │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼──────────────────┤                │
+│0 │0 │1 │0 │1  │  3 │ 11 │ 13 │  5  │  Green           │                │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼──────────────────┤                │
+│0 │0 │1 │1 │0  │  9 │ 11 │ 15 │ 13  │  Yellow          │                │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼──────────────────┤                │
+│0 │0 │1 │1 │1  │ 13 │ 13 │ 13 │ 13  │  White       ────┘                │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼───────────────────────────────────┤
+│0 │1 │0 │0 │0  │  9 │  9 │  9 │  9  │  Gray        ────┐                │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼──────────────────┤                │
+│0 │1 │0 │0 │1  │  8 │ 13 │ 12 │  7  │  Cyan            │                │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼──────────────────┤                │
+│0 │1 │0 │1 │0  │  9 │  4 │  9 │ 14  │  Orange          │                │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼──────────────────┤                │
+│0 │1 │0 │1 │1  │  4 │  4 │  8 │  8  │  Brown           │                │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼──────────────────┼──  GROUP "B"   │
+│0 │1 │1 │0 │0  │ 13 │  5 │  3 │ 11  │  Magenta         │                │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼──────────────────┤                │
+│0 │1 │1 │0 │1  │ 12 │ 12 │  6 │  6  │  Light Blue      │                │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼──────────────────┤                │
+│0 │1 │1 │1 │0  │  5 │  9 │ 13 │  9  │  Yellow-Green    │                │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼──────────────    │                │
+│0 │1 │1 │1 │1  │ 10 │  5 │  2 │  7  │  Purple       ───┘                │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼───────────────────────────────────┤
+│1 │X │X │0 │0  │  3 │  3 │  3 │  3  │  Blanking                         │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼───────────────────────────────────┤
+│1 │X │X │1 │0  │  1 │  1 │  5 │  5  │  Colour Burst                     │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼───────────────────────────────────┤
+│1 │X │X │0 │1  │  0 │  0 │  0 │  0  │  Sync                             │
+├──┼──┼──┼──┼───┼────┼────┼────┼─────┼───────────────────────────────────┤
+│1 │1 │1 │1 │1  │  0 │ 15 │  0 │ 15  │  Test                             │
+└──┴──┴──┴──┴───┴────┴────┴────┴─────┴───────────────────────────────────┘
+ X = Don't Care
+
+
+
+GI AY-3-8915 PIN CONFIGURATION - 18 Lead Dual In Line ├────────────────────────
+──────────────────────────────────────────────────────┘
+                         Top View
+                   ┌────────┬┬────────┐
+            Vss ───┤ 1      └┘     18 ├──- N.C.
+        OSC In  ───┤ 2  AY-3-8915  17 ├─── Test Reset (Connect to V??)
+        OSC Out ───┤ 3   COLOUR    16 ├──- N.C.
+             V5 ───┤ 4  PROCESSOR  15 ├─── Clock Output (3.579545MHz)
+             V4 ───┤ 5    CHIP     14 ├──- Ext. Vid
+             V3 ───┤ 6             13 ├─── Vdd
+             V2 ───┤ 7             12 ├──- RF8
+             V1 ───┤ 8             11 ├─── RF4
+            RF1 ───┤ 9             10 ├─── RF2
+                   └──────────────────┘
+
+
+
+
+┌────────────────────────────────────────────────────────────────────────┐
+│                                              +Q -I-Q+I                 │
+│          15 ┌──                              | |  | | |                │
+│             ├─                               | |13| | |                │
+│             ├─                               | ┌──┐ | | ┌──┐           │
+│ Relative 12 ├──           CYCLE              | │  │ | | │  │           │
+│             ├─         COLOUR BURST          | │  │ | | │  │           │
+│ Voltage     ├─            |   |              | │  │9| | │  │           │
+│           9 ├──       ───►|280|◄────    ┌────┐ │  └─┐ | │  └──┐        │
+│ Amplitude   ├─            |NS |         │    │ │    │ | │     │        │
+│             ├─            |   |         │    │ │    │ | │     │        │
+│           6 ├──           |5  |5        │    │5│    │ | │     │ │      │
+│             ├─            ┌─┐ ┌─┐       │    └─┘    │ ┌─┘     │ │      │
+│             ├─            │ │ │ │       │           │ │       │ │      │
+│           3 ├────┐   ┌──┐ │ │ │ └------─┘           │ │       │ │      │
+│             ├─   │   │  │1│ │1│                     │1│       │ │      │
+│             ├─   │   │  └─┘ └─┘                     └─┘       └─┘      │
+│           0 └────╧═══╧───────────────────────────────────────────────  │
+│                                                                        │
+│             │ B  │ S │  │               │  G │ 1 CYCLE│  2nd    │      │
+│             │ L  │ Y │  │               │  R │  BLUE  │  CYCLE  │      │
+│             │ A  │ N │01│  COLOUR BURST │  A │◄──────►│   BLUE  │      │
+│             │ N  │ C │  │               │  Y │ 280Nsec│         │      │
+│             │ K  │   │  │               │    │        │         │      │
+│                                                                        │
+└────────────────────────────────────────────────────────────────────────┘
+
+
+
+┌───────────────────────────────────────────────────────────────────────┐
+│                                 22K                                   │
+│                 ┌────  RF1 ────/\/\/────┐                             │
+│                 │                       │                             │
+│                 │               11K     │                             │
+│                 │      RF2 ────/\/\/────o                             │
+│   AY-3-8915   ──┤                       │                             │
+│     OUTS        │               5.6K    │                             │
+│                 │      RF4 ────/\/\/────o                             │
+│                 │                       │                             │
+│                 │               2.7K    │                             │
+│                 └────  FR8 ────/\/\/────o───►  TO MODULATION          │
+│                                         │                             │
+│                             ┌───────────0                             │
+│                             /           │                             │
+│                         18K \           │                             │
+│  FIG. 1 SCHEMATIC           /         ══╪══ 200pF                     │
+│                             │           │                             │
+│                          ═══╧═══     ═══╧═══                          │
+│                           ═════       ═════          ASTEC            │
+│                            ═══         ═══          UM1285-8          │
+│                             ═           ═                             │
+└───────────────────────────────────────────────────────────────────────┘
+
+
+
+ELECTRICAL CHARACTERISTICS │
+───────────────────────────┘
+
+Maximum Ratings
+
+Note: Exceeding these ratings could cause permanent damage to the device.
+This is a stress rating only and functional operation of this device at
+these conditions is not implied -- operating ranges are specified in
+Standard Conditions. Exposure to absolute maximum rating conditions for
+extended periods may affect device reliability. Data labeled "typical"
+is presented for design guidance only and is not guaranteed.
+
+Temperature under Bias...............................0 Degrees C to +40 C
+Storage Temperature...............................-55 Degrees C to +150 C
+All Input or Output Voltages with Respect to V??...... -0.2V to +9.0V
+Vcc with Respect to V??................................-0.2V to +9.0V
+
+Standard Conditions (unless otherwise noted)
+
+Ta = 0 Degrees C to +40 C
+Vcc = +4.85V -+ 5.15V
+V?? = 0.0V
+
+┌──────────────────────┬────┬────┬────┬─────┬──────┬───────────────────────┐
+│  Characteristic      │Sym │Min │Typ │Max  │Units │      Conditions       │
+├──────────────────────┼────┼────┼────┼─────┼──────┼───────────────────────┤
+│Oscillator Freq. In.  │ -  │ -  │ -  │ -   │ MHz  │ 7.15909MHz crystal    │
+│                      │    │    │    │     │      │ Trimmed by external   │
+│                      │    │    │    │     │      │     capacitor         │
+├──────────────────────┼────┴────┴────┴─────┴──────┴───────────────────────┤
+│3.579545MHz Clock     │                                                   │
+│    Output            │                                                   │
+│                      ├────┬────┬────┬─────┬──────┬───────────────────────┤
+│ Output Logic Low     │Vol │ 0  │ -  │ 0.5 │volts │                       │
+│                      ├────┼────┼────┼─────┼──────┤                       │
+│ Output Logic High    │Voh │ 2.4│ -  │ V?? │volts │                       │
+├──────────────────────┼────┴────┴────┴─────┴──────┴───────────────────────┤
+│Logic Inputs V1,V2,V3 │                                                   │
+│V4, V5, EXT. VIDEO    │                                                   │
+│                      ├────┬────┬────┬─────┬──────┬───────────────────────┤
+│ Input Logic Low      │Vil │ 0  │ -  │0.7  │volts │                       │
+├──────────────────────┼────┼────┼────┼─────┼──────┤                       │
+│ Input Logic Low      │Vih │ 2.4│ -  │Vcc  │volts │                       │
+├──────────────────────┼────┴────┴────┴─────┴──────┴───────────────────────┤
+│Outputs RF1,RF2,RF4   │                                                   │
+│       RF8            │                                                   │
+│                      ├────┬────┬────┬─────┬──────┬───────────────────────┤
+│ Output ON            │ T  │ 5  │ -  │ -   │ mA   │ Vout = +0.5V          │
+├──────────────────────┼────┼────┼────┼─────┼──────┤                       │
+│ Output OFF           │ T  │ -  │ -  │ 10  │ uA   │ Vout = +2.4V          │
+├──────────────────────┼────┴────┴────┴─────┴──────┴───────────────────────┤
+│Supply Current        │                                                   │
+│                      ├────┬────┬────┬─────┬──────┬───────────────────────┤
+│ V??                  │ ?cc│ -  │ -  │ 80  │ mA   │ Vcc = 5.25V @ 40(deg)C│
+└──────────────────────┴────┴────┴────┴─────┴──────┴───────────────────────┘
+
+
+
+HAND CONTROLLERS ├────────────────────────────────────────────────────────
+─────────────────┘
+
+The Intellivision hand controller consists of a numeric keypad, 4 side
+buttons and a 16 position direction disk.  The disk replaces a standard
+8 position joystick.
+
+An Intellivision has a left and a right hand controller. Each controller
+has a disc controller, a 12-number keypad, and 4 "action" buttons (2 on
+the left side and 2 on the right side). The disc controller can record
+any of 16 different locations when pressed, somewhat like a joystick.
+There are two peculiarities of the hand controller:
+
+1. The top action keys are wired together, so there are really only
+   three separate action buttons: left bottom, right bottom and the
+   left/right top button.
+
+2. The 12-number keypad duplicates the disc controller and the action
+   keys, so you can either use the disc controller and the action
+   buttons -- OR -- the keypad, but not both at the same time.
+
+Each hand controller is hooked to an 8-bit input port. (These are
+physically the input ports of the sound chip, but that's not relevant to
+the programmer.) The disc controller outputs a 5-bit code; the action
+buttons output a 3-bit code. The 12-number keypad outputs an 8-bit code.
+The EXEC contains routines which debounce key inputs and convert 5-bit
+disc hardware codes to numbers, 0 through 15, which indicate directions.
+A game program can access the input ports directly, but the EXEC
+routines are usually used, instead.
+                               
+001FFH Left controller data direct from AY8910
+001FEH Right controller data direct from AY8910
+0035DH Pointer to HANDTAB
+HANDTAB (each a pointer to a handler routine, stored lo, hi)
+    + 000H DISC          R0 = disc value (0 - 15) or negative if released
+    + 002H KEYPAD        R0 = keypad value (0 - 9, 10 = clear, 11 = enter)
+    + 004H UPPER BUTTONS R0 = 1 if pressed, -1 if depressed (?)
+    + 006H LOWER RIGHT   same
+    + 008H LOWER LEFT    same
+    R1 = 0 for left controller, 1 for right (?)
+
+Also contains:
+  - Code for the MATTEL ELECTRONICS PRESENTS screen.
+  - Allow you to set velocity for MO's, and to adjust their coordinates
+    (by writing to the STIC) accordingly.
+  - "Creating sound and music", probably has routines for creating
+    tone and noise envelopes.
+  - Getting data from the hand controllers and converting it to usable
+    data.
+
+
+Intellivision Hand Controller Construction │
+───────────────────────────────────────────┘
+
+The keypad consists of a folded mylar sheet upon which conductive traces
+are deposited.  When a button is pressed, various traces on the mylar
+sheet are pushed together so that they make electrical contact.  The
+traces are designed so that when pressed, each button connects at least
+two traces to ground.  Each trace is connected to one of the 8
+controller inputs.  Since two or more pins are grounded whenever a
+button is pressed, all 23 buttons can be resolved (see below).
+
+
+                 Hand controller button (metal on mylar)
+                 Fold as shown, Output returns x,y coord
+                 ┌────────────────────────────────────┐
+           + 5V ─┼──────mwmwmw───┬──────────┐         │
+         Output ─┼───────────────┘ ┌───     │         │
+         Output ─┼───────────────┐ │────┐   │         │
+           + 5V ─┼──────mwmwmw───┴─┼─── ├───┘         │
+                 │                 │────┘  <Button    │
+                 │                 └───               │
+                 │- - FOLD- - - - - - - - - FOLD- - - │
+                 │                   │                │
+                 │                   │                │
+                 │                   │                │
+                 │                   │                │
+                 │                   │                │
+                 │ Gnd  ─────────────┘                │
+                 └────────────────────────────────────┘
+
+Pins seen from the front of the female connector │
+─────────────────────────────────────────────────┘
+
+                 Dial         Pins     Keypad   Pins  Side Keys     Pins
+                 ────         ────     ──────   ────  ─────────     ────
+   0 1 2 3 4     Down       - 1        1      - 1,8   Top Right     8,6
+  ┌─────────┐    Down Right - 1,2,5    2      - 1,7   Top Left      8,6
+  │o o o o o│    Right      - 2        3      - 1,6   Bottom Right  8,7
+  └┐o o o o┌┘    Up Right   - 2,3,5    4      - 2,8   Bottom Left   7,6
+   └───────┘     Up         - 3        5      - 2,7
+    5 6 7 8      Up Left    - 3,4,5    6      - 2,6
+                 Left       - 4        7      - 3,8
+                 Down Left  - 1,4,5    8      - 3,7
+                                       9      - 3,6
+                                       0      - 4,7
+         ┌───────────────────────┐     Enter  - 4,6
+         │  ┌─────┬─────┬─────┐  │     Clear  - 4,8
+       ┌─┤  │ <1> │ <2> │ <3> │  ├─┐
+  8,6  │ │  │ 1,8 │ 1,7 │ 1,6 │  │ │ 8,6
+       └─┤  ├─────┼─────┼─────┤  ├─┘
+         │  │ <4> │ <5> │ <6> │  │
+         │  │ 2,8 │ 2,7 │ 2,6 │  │
+         │  ├─────┼─────┼─────┤  │
+         │  │ <7> │ <8> │ <9> │  │
+       ┌─┤  │ 3,8 │ 3,7 │ 3,6 │  ├─┐
+  7,6  │ │  ├─────┼─────┼─────┤  │ │ 8,7
+       └─┤  │Clear│  0  │Enter│  ├─┘
+         │  │ 4,8 │ 4,7 │ 4,6 │  │
+         │  └─────┴─────┴─────┘  │
+         ├───────────────────────┤
+         │3,4,5┌───────────┐2,3,5│
+         │    ┌┘     3     └┐    │
+         │  ┌─┘             └─┐  │
+         │  │                 │  │
+         │  │ 4             2 │  │
+         │  │                 │  │
+         │  └─┐             ┌─┘  │
+         │    └┐     1     ┌┘    │
+         │1,4,5└───────────┘1,2,5│
+         └───────────────────────┘

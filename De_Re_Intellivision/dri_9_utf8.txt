@@ -1,0 +1,590 @@
+
+                    ┌────────────────────────────────────┐
+                    │  Mattel Electronics Intellivision  │
+                    │       Intelligent Television       │
+                    └────────────────────────────────────┘
+
+
+
+             ██
+             █          "Mattel Electronics Presents"
+         ██████
+         █ ███
+         █ █████            ┌───────────────────┐
+           ██               │De Re Intellivision│
+                            └───────────────────┘
+           ██
+          ██████     (In Latin "All About Intellivision")
+          ██████
+          █    █
+         ██    █       Compilation By William M. Moeller
+         ██    █
+        ██
+        █
+
+────────────────────────────────────────────────────────────────────────────
+                     Last Modified November 8, 1997
+                    ─────────────────────────────────
+
+                               Chapter IX
+
+                         "Intellivision T-Card"
+
+                          ────────────────────
+         Nov 08/97 - Revision 0.0 - Print in condensed mode
+
+If you have any suspicions of errors or questions, ask now while we
+have the cart to check.  It will be returned to its owner soon.
+───────────────────────────────────────────────────────────────────────
+
+INTELLIVISION EDGE CONNECTOR
+Motherboard  CART ROM  TOP       BOTTOM
+                             #       #
+??           NC         ?? - 2       1-GND    -b22
+STIC Pin 19  NC         ?? - 4       3--MSYNC -b21
+Matl Pin 7   NC         ?? - 6       5-D7     -b20
+STIC Pin 9   GND        ?? - 8       7-D8     -b19
+STIC Pin 15* GND        ?? -10       9-D6     -b18
+Supply ??    GND        ?? -12      11-D9     -b17
+CPU INTRM    NC        INT -14      13-D5     -b16
+                       GND -16 ─┐M  15-D10    -b15
+                       GND -18 ─┤T  17-D4     -b14
+                       GND -20 ─┤H  19-D11    -b13
+                       GND -22 ─┤R  21-D3     -b12
+                       GND -24 ─┤B  23-D12    -b11
+                       GND -26 ─┤R  25-D13    -b10
+                       GND -28 ─┘D  27-D2     -b9
+CPU BUSAK    NC         ?? -30      29-D14    -b8
+┌─STIC BC1   ────  ┌─── *1 -32      31-D1     -b7
+│ STIC BC2   ──── C│┌── *2 -34      33-D0     -b6
+│ STIC BDIR  ──── A││┌─ *3 -36 SLOT 35-D15    -b5
+│ Mattel Pin 10   R││└─ *3 -38 ─────37-*3     -b4
+│ Mattel Pin 12   T│└── *2 -40 ────-39-*2     -b3
+├─Mattel Pin 14    └─── *1 -42 ─────41-*1     -b2
+│ GND        GND        GND-44      43-VCC    -b1
+│
+└─Timing Read/Write etc.
+
+┌───┬───┬────┬──────┬─────────────────────────────────────────────────┐
+│BC1│BC2│BDIR│      │                                                 │
+├───┼───┼────┼──────┼─────────────────────────────────────────────────┤
+│ 0 │ 0 │ 0  │NACT  │ CPU inactive, and disconnected from bus         │
+├───┼───┼────┼──────┼─────────────────────────────────────────────────┤
+│ 0 │ 0 │ 1  │BAR   │ A memory address is being presented on the BUS  │
+├───┼───┼────┼──────┼─────────────────────────────────────────────────┤
+│ 0 │ 1 │ 0  │IAB   │ CPU is acknowledging an interrupt request       │
+│   │   │    │      │ External logic must place the starting address  │
+│   │   │    │      │ for the interrupt service routine on the bus.   │
+├───┼───┼────┼──────┼─────────────────────────────────────────────────┤
+│ 0 │ 1 │ 1  │DWS   │ Data write strobe to memory.                    │
+├───┼───┼────┼──────┼─────────────────────────────────────────────────┤
+│ 1 │ 0 │ 0  │ADAR  │ This signal identifies a time interval during   │
+│   │   │    │      │ which the Data/Address bus is floated, while    │
+│   │   │    │      │ data input on the Data Bus is being interpreted │
+│   │   │    │      │ as the effecitve memory address during a direct │
+│   │   │    │      │ memory addressing operation.                    │
+├───┼───┼────┼──────┼─────────────────────────────────────────────────┤
+│ 1 │ 0 │ 1  │DW    │ Data is being written to memory.                │
+│   │   │    │      │ Preceeds DWS by one cycle.                      │
+├───┼───┼────┼──────┼─────────────────────────────────────────────────┤
+│ 1 │ 1 │ 0  │DTB   │ Read strobe (external device is to place data   │
+│   │   │    │      │ on the bus.                                     │
+│ 1 │ 1 │ 1  │INTAK │ Interrupt acknnowledge.  Followed by IAD.       │
+└───┴───┴────┴──────┴─────────────────────────────────────────────────┘
+
+  │  BAR MC1  │ NACT MC2  │  DTB MC3  │   CP-1600
+  │t1│t2│t3│t4│  │  │  │  │t1│t2│t3│t4│   Instruction Fetch timing
+  │  │  │  │  │t1│t2│t3│t4│  │  │  │  │   ────────────────────────
+  │  │  │  │  │  │  │  │  │  │  │  │  │
+  ┌─┐   ┌─┐   ┌─┐   ┌─┐   ┌─┐   ┌─┐   ┌─┐   ┌──  O1
+──┘ └───┘ └───┘ └───┘ └───┘ └───┘ └───┘ └───┘
+─┐|  ┌─┐|  ┌─┐|  ┌─┐   ┌─┐|  ┌─┐   ┌─┐|  ┌─┐
+ └───┘ └───┘ └───┘ └───┘ └───┘ └───┘ └───┘ └───  O2
+  |  |  |     |           ┌───────────┐
+──────────────────────────┘           └────────  BC1
+  |  |  |     |           ┌───────────┐
+──────────────────────────┘           └────────  BC2
+  ┌───────────┐
+──┘  |  |     └────────────────────────────────  BDIR
+     |  ┌─────────┐            ┌───┐
+─────xxx│         ├────────────┤   ├───────────  Address
+        └─────────┘            └───┘
+        Address out           Data in
+
+
+
+TCART Theory of Operation ├──────────────────────────────────────────────────
+──────────────────────────┘
+
+  The TCART is designed to allow 4 independent banks of standard ROM or
+standard static RAM to be mapped into the 1610 address space.  Each ROM
+bank can be up to 4K in size.  Each static RAM bank can be up to 2K in
+size.  Banks can be configured though DIP switches to start at any 4K
+address in the 1610's address space.  The DIP switches also allow the
+selection of RAM/ROM, and in which portion of the 4K bank the 2K of RAM
+resides.
+
+TCART Construction │
+───────────────────┘
+
+                 ┌─┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬─┐  a   74LS374N high order data/address
+                 │ ││││││││││││││││ │  b   74LS374N low order data/address
+                 │                  │  c   74LS42N  4 to 10 decoder
+                 │    ┌─┐ ┌─┐       │  d   74LS04N  Hex inverter
+                 │    │ │ │ │ ┌─┐   │  e   74LS08N  Quad 2 input +NAND
+                 │    │a│ │b│ │ │   │  rhx ROM bank a (high)
+                 │    │ │ │ │ │c│   │  rlx ROM bank a (high)
+                 │    └─┘ └─┘ └─┘   │  J-M Toggle switches banks 1-4
+                 │                  │  n   54LS51J and-or-invert gate
+                 │      ┌─┐ ┌─┐     │  o   74LS00N quad 2 input +nand
+                 │      │d│ │e│     │  p   74LS05N 4 bit magnitude comparitor
+                 │      │ │ │ │     │  sn  dip switches for base address ROM/RAM
+┌────────────────┘      └─┘ └─┘     └────────────────┐
+│                                                    │
+│                  tcart top view                    │
+│      ┌────────┐┌────────┐┌────────┐┌────────┐      │
+│      │ rh1    ││ rh2    ││ rh3    ││ rh4    │      │
+│      └────────┘└────────┘└────────┘└────────┘      │
+│      ┌────────┐┌────────┐┌────────┐┌────────┐      │
+│      │ rl1    ││ rl2    ││ rl3    ││ rl4    │      │
+│      └────────┘└────────┘└────────┘└────────┘      │
+│  s1┌──────┐  s2┌──────┐  s3┌──────┐  s4┌──────┐    │
+│    └──────┘    └──────┘    └──────┘    └──────┘    │
+│           ┌─┐         ┌─┐         ┌─┐         ┌─┐  │
+│   ┌─┐ ┌─┐ │ │ ┌─┐ ┌─┐ │ │ ┌─┐ ┌─┐ │ │ ┌─┐ ┌─┐ │ │  │
+│   │n│ │o│ │p│ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │  │
+│   │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │  │
+│   └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘  │
+└──┬─────────────────────────────────────────────────┘
+   └────┬──────┴────┬──────┴─────┬─────┴─────┬─────┘
+     GLUE for    GLUE for    GLUE for    GLUE for
+     ROM/RAM     ROM/RAM     ROM/RAM     ROM/RAM
+     bank 1      bank 2      bank 3      bank 4
+
+
+  Standard 2732 EPROM's (4K) are used.  The type of Static RAM used
+is such that the pinouts are identical to the 2732, with what would be
+A11 on the 2764, being used for R/W.
+
+  What are now standard components need some support circuitry to
+connect them to the 1610 bus.  The 1610 bus is muliplexed and carries
+both addresses and data.  To connect RAM/ROM to the bus, essentially all
+that is needed are a couple of 8 bit latches to take and hold the
+address while it is presented to the address inputs on the RAM/ROM, some
+address decoding to select where the RAM/ROM resides, and some circuitry
+to decode the 1610 bus phases into something that can coordinate the
+data transfer.
+
+  RAM/ROM is organized as 4 banks of 2 chips, each taking or returning 8
+bits of the 16 bit value held at each memory address in the 1610's 64K
+address space.  Address lines A0-A10 are connected in parallel to each
+RAM/ROM chip.  The data ports of all chips taking/returning the high
+order data byte and all chips taking/returning the low order data byte
+byte are respectively connected in parallel.  The Output Enable pin on
+each RAM/ROM chip (both banks) are connected together.  For each of the
+four (high,low) banks the Chip -nable lines are tied to a common source,
+as is the A11 (ROM)- R/W (RAM) lines.
+
+  Since the 1610 address bus is multiplexed, the address presented to
+RAM/ROM and the address decoding circuitry must first be latched to hold
+the value while data is read/written from RAM/ROM.
+
+  The address latch consists of 2 74LS374 octal flip/flops that have
+their inputs tied directly to the 1610 data/address bus.  Output control
+for these latches is constantly low.  The address is latched on eather
+of the 1610's BAR or ADAR bus phases.
+
+  Address bits (A0-A10) from the latches is presented directly to all
+RAM/ROM chips.  A12-A15 is sent to the address decoding section
+associated with each of the 4 (high,low) RAM/ROM banks so that the
+appropirate Chip Enable signal is generated.  A11 is routed through some
+logic that optionally replaces the signal with a Read/Write signal
+needed to support static RAM.
+
+  Address decoding is accomplished through the use of a 74LS85N 4 bit
+comparitor.  This chip compares 4 bits with 4 bits and returns the
+result. as A>B, A<B, A=B.
+
+  This comparitor also takes 3 input signals - intended to be cascaded
+from the 3 outputs of another identical comparitor and is intended to
+allow comparisons of 8, 12, 16 etc, bits.  In this case, the <input> A=B
+is connected to a dip switch labeled ENA and allows the switch to
+enable/disable the A=B output of the comparator, thereby
+enabling/disabling the RAM/ROM bank.
+
+  The MS4bits of the address presented through the latches (A12-A15) are
+presented to the A inputs of the comparitor, and 4 bits selected by DIP
+switches are presented to the B inputs of the comparitor.  When the bits
+match, the A=B output is triggered (presuming it is enabled) indicating
+that the RAM/ROM bank should respond.
+
+  For ROM use, the A=B signal could be directly used to generate the
+Chip Enable signal needed to select the Bank.  However, to support RAM,
+the signal is modified so that the select signal is generated only when
+the address is in the upper half or lower half of the 4K window. (The
+static RAM used can be no more than 2K deep.) This selection is
+accomplished by looking at A11.
+
+  RAM/ROM selection is accomplished by using the dip switches labeled
+RAM and RAMH.  (RAM = RAM select, RAMH = RAM High Low select).  When RAM
+is selcted, Chip Enable is asserted when A11 = RAMH.
+
+  The RAM dip switch also used to select the signal sent to the
+A11(ROM),R/W(RAM) line on the RAM/ROM chip in its corresponding High/Low
+bank.  When the dip switch RAM is in one position, A11 from the address
+latches is routed to A11 on the (presumed) ROM chips in the bank.  In
+the alternate position a signal from the bus phase circuitry -
+indicating a bus write - is sent to the R/W line on the (presumed) RAM
+chips in the bank.
+
+  The data output ports of the RAM/ROM chips are connected directly to
+the 1610's bus and do not require external latches or buffers.  The
+RAM/ROM chips used must present or take their data to/from the 1610 bus
+only when the appropriate Chip Enable and Output Enable signals are
+given, and must keep their output ports in a high impedence state at all
+other times.  Standard 27xx series EPROMS do this.  At this point, I
+don't know what static RAM components are compatible.
+
+A rough conceptual sketch of the TCART is shown below.
+
+
+                              16 bits of Data Returned/Taken
+ ┌─────────────────────────────┬───────────┬───────────┬───────────┐
+ │                             │           │           │           │
+ ▼         ┌───┐ A0-A10      ┌─┴─┐       ┌─┴─┐       ┌─┴─┐       ┌─┴─┐
+ │         │ L ├────────────►│ R ├──────►│ R ├──────►│ R ├──────►│ R │
+ │ Address │ A │ A12-A15  -OE│ O │    -OE│ O │    -OE│ O │    -OE│ O │
+ │ Bus     │ T ├─────────┐ ┌►│ M ├──────►│ M ├──────►│ M ├──────►│ M │
+─┴──────┬─►│ C │ A11     │ │ │ 1 │◄┐ A11 │ 2 │◄┐ A11 │ 3 │◄┐ A11 │ 4 │◄┐ A11
+        │  │ H ├───────┐ │ │ └───┘ │ R/W └───┘ │ R/W └───┘ │ R/W └───┘ │ R/W
+        │  └───┘       │ │ │  ▲-CE │      ▲-CE │      ▲-CE │      ▲-CE │
+        │    ▲ CLK   ┌─x─x─┘  │    │      │    │      │    │      │    │
+        │    │       │ │ │   ┌┴──┐ │     ┌┴──┐ │     ┌┴──┐ │     ┌┴──┐ │
+        │  ┌─┴─┐     │ │ └──►│a d├─x────►│a d├─x────►│a d├─x────►│a d│ │ Address
+        │  │ D ├─────┘ │     │d e│ │     │d e│ │     │d e│ │     │d e│ │ Decoding
+   BC1  │  │ E │       │     │r c│ │     │r c│ │     │r c│ │     │r c│ │
+   BC2  │  │ C │       │     └─┬─┘┌┴──┐  └─┬─┘┌┴──┐  └─┬─┘┌┴──┐  └─┬─┘┌┴──┐
+   BDIR └─►│ O │       │ A11   └──┤ G │    └──┤ G │    └──┤ G │    └──┤ G │
+           │ D │       └─────────►│ L ├──────►│ L ├──────►│ L ├──────►│ L │
+           │ E ├─────────────────►│ U ├──────►│ U ├──────►│ U ├──────►│ U │
+           └───┘         R/W      └───┘       └───┘       └───┘       └───┘
+
+
+Note that each bank of RAM/ROM 1-4 consists of 2 chips, one holding the
+high order byte, and one holding the low order byte. 16 bits of data can
+be held at each address in the 1610 64K address space.
+
+Also note that for each bank of RAM/ROM there is separate address
+decoding and A11(R/W) and -CE signal generation.  Each bank is
+independently configurable and may hold RAM or ROM starting at any 4K
+address.  RAM may be configured to respond only to addresses only in the
+upper/lower half of the 4K window.  Banks may be set to overlap, and
+while useless for use with ROM's, this allows an entire 4K address space
+to be filled with RAM.  2K from one bank, and 2K from another.
+
+Configurations can include...
+
+x = don't care. Any value/state.
+
+┌─────────────────────────────────────────────┐
+│ TCART disabled.                             │
+├─────────┬────────┬────────┬────────┬────────┤
+│         │ Bank 1 │ Bank 2 │ Bank 3 │ Bank 4 │
+├─────────┼────────┼────────┼────────┼────────┤
+│ Ena     │   0    │   0    │   0    │   0    │
+│ RAM     │   x    │   x    │   x    │   x    │
+│ RAMH    │   x    │   x    │   x    │   x    │
+│ ADDRESS │   x    │   x    │   x    │   x    │
+└─────────┴────────┴────────┴────────┴────────┘
+
+┌─────────────────────────────────────────────┐
+│ 8 K ROM installed at 05000H to 06FFFH       │
+├─────────┬────────┬────────┬────────┬────────┤
+│         │ Bank 1 │ Bank 2 │ Bank 3 │ Bank 4 │
+├─────────┼────────┼────────┼────────┼────────┤
+│ Ena     │   1    │   1    │   0    │   0    │
+│ RAM     │   0    │   0    │   x    │   x    │
+│ RAMH    │   0    │   0    │   x    │   x    │
+│ ADDRESS │   5    │   6    │   x    │   x    │
+└─────────┴────────┴────────┴────────┴────────┘
+
+┌─────────────────────────────────────────────┐
+│ 8 K ROM installed at 05000H to 06FFFH       │
+│ 2 K RAM installed at 0E000H to 0E7FFH       │
+├─────────┬────────┬────────┬────────┬────────┤
+│         │ Bank 1 │ Bank 2 │ Bank 3 │ Bank 4 │
+├─────────┼────────┼────────┼────────┼────────┤
+│ Ena     │   1    │   1    │   1    │   0    │
+│ RAM     │   0    │   0    │   1    │   x    │
+│ RAMH    │   0    │   0    │   0    │   x    │
+│ ADDRESS │   5    │   6    │   E    │   x    │
+└─────────┴────────┴────────┴────────┴────────┘
+
+┌─────────────────────────────────────────────┐
+│ 8 K ROM installed at 05000H to 06FFFH       │
+│ 4 K RAM installed at 0E000H to 0EFFFH       │
+├─────────┬────────┬────────┬────────┬────────┤
+│         │ Bank 1 │ Bank 2 │ Bank 3 │ Bank 4 │
+├─────────┼────────┼────────┼────────┼────────┤
+│ Ena     │   1    │   1    │   1    │   1    │
+│ RAM     │   0    │   0    │   1    │   1    │
+│ RAMH    │   0    │   0    │   0    │   1    │
+│ ADDRESS │   5    │   6    │   E    │   E    │
+└─────────┴────────┴────────┴────────┴────────┘
+
+
+
+Tcart Circuit ├────────────────────────────────────────────────────────────────
+──────────────┘
+                                                        LS734 FUNCTION TABLE
+                                                        --------------------
+                                                          Output CLK D Out
+                                                          CNTRL
+     high order address/data     low order address/data     L     ^  H  H
+            74LS374N                    74LS374N            L     ^  L  L
+          Octal D type                 Octal D type         L     L  X  QO
+         Edge triggered               Edge triggered        H     X  X  Z
+            Flip/Flop                    Flip/Flop
+
+           low on BAR or ADAR ?
+┌────────┬───────────────────────────┐                           4 -> 10  (output is inverted)
+│        │ ┌───────┐                 │ ┌───────┐                 decoder  0000 -> 0111111111
+│        └─┤CLK GND├─                └─┤CLK GND├─                74LS42N  0001 -> 1011111111
+│ (a12) o──┤5q   4q├─o (a11)       a4 ─┤5q   4q├─ a3            ┌───────┐
+│  b11-d4b─┤5d   4d├─ d3b-b13  b14-d4a─┤5d   4d├─ d3a-b12   nc ─┤7   GND├─
+│  b10-d5b─┤6d   3d├─ d2b-b15  b16-d5a─┤6d   3d├─ d2a-b9    nc ─┤8     6├─ nc      110 DWS
+│ (a13) o──┤6q   3q├─ a10          a5 ─┤6q   3q├─ a2        nc ─┤9     5├────────┐ 101 DW
+│ (a14) o──┤7q   2q├─ a9           a6 ─┤7q   2q├─ a1       GND ─┤d     4├──────┐ │ 100 BAR  
+│   b8-d6b─┤7d   2d├─ d1b-b17  b18-d6a─┤7d   2d├─ d1a-b7  bdir ─┤c     3├────┐ │ │ 011 DTB
+│   b5-d7b─┤8d   1d├─ d0b-b19  b20-d7a─┤8d   1d├─ d0a-b6   bc2 ─┤b     2├─nc │ │ │ 010 IAB
+│ (a15) o──┤8q   1q├─ a8           a7 ─┤8q   1q├─ a0       bc1 ─┤a     1├──┐ │ │ │ 001 ADAR
+│         ─┤+5 │-OC├─ GND             ─┤+5 │-OC├─ GND          ─┤+5 │  0├┐ │ │ │ │ 000 NACT
+│          └───┴───┘                   └───┴───┘                └───┴───┘o │ │ │ │
+└────────────────────────────────────────────────────────────────┐      nc │ │ │ │
+                         74LS04N                       74LS08N   │         │ │ │ │
+                        ┌───────┐                     ┌───────┐  │         │ │ │ │
+                    nc ─┤4y  GND├─                nc ─┤3y  GND├─ │         │ │ │ │
+                   GND ─┤4a   3y├─nc?            GND ─┤3b   2y├──┘  bar    │ │ │ │
+   a11 (c1ab) o─────────┤5y   3a├─GND            GND ─┤3a   2b├────────────x─x─┘ │
+  oa (bank 1) o─────────┤5a   2y├─o a11 (c3ab)    nc ─┤4y   2a├───┐        │ │   │
+   a11 (c2ab) o─────────┤6y   2a├─o oa (bank 3)  GND ─┤4b   1y├───x──┐ dtb │ │   │
+  oa (bank 2) o─────────┤6a   1y├─o a11 (c4ab)   GND ─┤4a   1b├───x──x─────x─┘   │
+                       ─┤+5 │ 1a├─o oa (bank 4)      ─┤+5 │ 1a├───┴──x─────┘     │
+                        └───┴───┘                     └───┴───┘      │ adar      │
+                           hex                          QUAD   a b y │           │
+                         Inverter                      2 input h h h │           │
+                          y = -a                       + AND   l x l │           │
+                                                               x l l │           │
+                                                                     │           │
+   For the ROM chips below, -CE and A11 are generated for each       │           │
+   High/Low chip set from the corresponding bank of address decoding │           │
+   RAM/ROM selection (glue) that follows.                            │           │
+                                                                     │           │
+           line goes low on BAR or DWS ?                             │           │
+   ┌─────────────────────────────────────┬───────────────────────────┘        dw o
+   │          bank a                     │          bank b
+   │  ┌────────────────────┐             │  ┌────────────────────┐
+   │  │   ┌────────────┐   │             │  │   ┌────────────┐   │
+   │  │ ┌─┤D3  c1h  GND├─  │             │  │ ┌─┤D3  c1l  GND├─  │
+   │  │ ├─┤D4        D2├─┐ │             │  │ ├─┤D4        D2├─┐ │
+┌──x──┴─┼─┤D5        D1├─┼─┘           ┌─x──┴─┼─┤D5        D1├─┼─┘
+│  │    ├─┤D6        D0├─┘             │ │    ├─┤D6        D0├─┘
+│  │    └─┤D7        A0├─┐             │ │    └─┤D7        A0├─┐
+│  │    o─┤-CE       A1├─┤             │ │    o─┤-CE       A1├─┤
+│  │   ┌──┤A10 2732  A2├─┤             │ │   ┌──┤A10 2732  A2├─┤
+│  ├───x──┤-OE       A3├─┼─┬────┤      │ ├───x──┤-OE       A3├─┼─┬───┐
+│  │ o─x──┤A11 1     A4├─┤ │    │      │ │ o─x──┤A11 1     A4├─┤ │   │
+│  │ ┌─┼──┤A9        A5├─┤ │    │      │ │ ┌─┼──┤A9        A5├─┤ │   │
+│  │ │ └──┤A8        A6├─┤ │    │      │ │ │ └──┤A8        A6├─┤ │   │
+│  │ │   ─┤VCC ┌──┐  A7├─┘ │    │      │ │ │   ─┤VCC ┌──┐  A7├─┘ │   │
+│  │ │    └────┴──┴────┘   │    │      │ │ │    └────┴──┴────┘   │   │
+│  │ └─────────────────────┘    │      │ │ └─────────────────────┘   │
+│  │                            │      │ │                           │
+│  │  ┌────────────────────┐    │      │ │  ┌────────────────────┐   │
+│  │  │   ┌────────────┐   │    │      │ │  │   ┌────────────┐   │   │
+│  │  │ ┌─┤D3  c2h  GND├─  │    │      │ │  │ ┌─┤D3  c2l  GND├─  │   │
+│  │  │ ├─┤D4        D2├─┐ │    │      ├─x──┤ ├─┤D4        D2├─┐ │   │
+├──x──┴─┼─┤D5        D1├─┼─┘    │      │ │  └─┼─┤D5        D1├─┼─┘   │
+│  │    ├─┤D6        D0├─┘      │      │ │    ├─┤D6        D0├─┘     │
+│  │    └─┤D7        A0├─┐      │      │ │    └─┤D7        A0├─┐     │
+│  │   o──┤-CE       A1├─┤      │      │ │    o─┤-CE       A1├─┤     │
+│  │   ┌──┤A10 2732  A2├─┤      │      │ │   ┌──┤A10 2732  A2├─┤     │
+│  ├───x──┤-OE       A3├─┼─┬────┤      │ ├───x──┤-OE       A3├─┼─┬───┤
+│  │ o─x──┤A11 2     A4├─┤ │    │      │ │ o─x──┤A11 2     A4├─┤ │   │
+│  │ ┌─┼──┤A9        A5├─┤ │    │      │ │ ┌─┼──┤A9        A5├─┤ │   │
+│  │ │ └──┤A8        A6├─┤ │    │      │ │ │ └──┤A8        A6├─┤ │   │
+│  │ │   ─┤VCC ┌──┐  A7├─┘ │    │      │ │ │   ─┤VCC ┌──┐  A7├─┘ │   │
+│  │ │    └────┴──┴────┘   │    │      │ │ │    └────┴──┴────┘   │   │
+│  │ └─────────────────────┘    │      │ │ └─────────────────────┘   │
+│  │  ┌────────────────────┐    │      │ │  ┌────────────────────┐   │
+│  │  │   ┌────────────┐   │    │      │ │  │   ┌────────────┐   │   │
+│  │  │ ┌─┤D3  c3h  GND├─  │    │      │ │  │ ┌─┤D3  c3l  GND├─  │   │
+│  │  │ ├─┤D4        D2├─┐ │    │      │ │  │ ├─┤D4        D2├─┐ │   │
+├──x──┴─┼─┤D5        D1├─┼─┘    │      ├─x──┴─┼─┤D5        D1├─┼─┘   │
+│  │    ├─┤D6        D0├─┘      │      │ │    ├─┤D6        D0├─┘     │
+│  │    └─┤D7        A0├─┐      │      │ │    └─┤D7        A0├─┐     │
+│  │    o─┤-CE       A1├─┤      │      │ │    o─┤-CE       A1├─┤     │
+│  │   ┌──┤A10 2732  A2├─┤      │      │ │   ┌──┤A10 2732  A2├─┤     │
+│  ├───x──┤-OE       A3├─┼─┬────┤      │ ├───x──┤-OE       A3├─┼─┬───┤
+│  │ o─x──┤A11 3     A4├─┤ │    │      │ │ o─x──┤A11 3     A4├─┤ │   │
+│  │ ┌─┼──┤A9        A5├─┤ │    │      │ │ ┌─┼──┤A9        A5├─┤ │   │
+│  │ │ └──┤A8        A6├─┤ │    │      │ │ │ └──┤A8        A6├─┤ │   │
+│  │ │   ─┤VCC ┌──┐  A7├─┘ │    │      │ │ │   ─┤VCC ┌──┐  A7├─┘ │   │
+│  │ │    └────┴──┴────┘   │    │      │ │ │    └────┴──┴────┘   │   │
+│  │ └─────────────────────┘    │      │ │ └─────────────────────┘   │
+│  │                            │      │ │                           │
+│  │  ┌────────────────────┐    │      │ │  ┌────────────────────┐   │
+│  │  │   ┌────────────┐   │    │      │ │  │   ┌────────────┐   │   │
+│  │  │ ┌─┤D3  c4h  GND├─  │    │      │ │  │ ┌─┤D3  c4l  GND├─  │   │
+│  │  │ ├─┤D4        D2├─┐ │    │      │ │  │ ├─┤D4        D2├─┐ │   │
+├──x──┴─┼─┤D5        D1├─┼─┘    │      ├─x──┴─┼─┤D5        D1├─┼─┘   │
+│  │    ├─┤D6        D0├─┘      │      │ │    ├─┤D6        D0├─┘     │
+│  │    └─┤D7        A0├─┐      │      │ │    └─┤D7        A0├─┐     │
+│  │    o─┤-CE       A1├─┤      │      │ │    o─┤-CE       A1├─┤     │
+│  │   ┌──┤A10 2732  A2├─┤      │      │ │   ┌──┤A10 2732  A2├─┤     │
+│  └───x──┤-OE       A3├─┼─┬────┘      │ └───x──┤-OE       A3├─┼─┬───┘
+│    o─x──┤A11 4     A4├─┤ │           │   o─x──┤A11 4     A4├─┤ │
+│    ┌─┼──┤A9        A5├─┤ │           │   ┌─┼──┤A9        A5├─┤ │
+│    │ └──┤A8        A6├─┤ │           │   │ └──┤A8        A6├─┤ │
+│    │   ─┤VCC ┌──┐  A7├─┘ │           │   │   ─┤VCC ┌──┐  A7├─┘ │
+│    │    └────┴──┴────┘   │           │   │    └────┴──┴────┘   │
+│    ├─────────────────────┴───────────x───┴─────────────────────┘
+│    │                                 │
+│    o From Latches LS11 bits of       │
+│           Address                    │
+│      A11 for each set of ROMs        │
+│      is sent through glue            │
+│      RAM/RAMH switches may           │
+│      replace A11 with R/W for        │
+│      Static RAM access.              │
+│                                      │
+o To edge connector (High Data)        o To edge connector (Low Data)
+
+
+
+
+  One set of address address comparison (glue) for each set of two ROM's
+above.  Set consists of one ROM from each bank.  4 sets in total.
+
+                                                  +5v ──┌─┬─┬─┬─┬─┬─┬─┐
+                      a  b  y                         ┌─┴─┴─┴─┴─┴─┴─┴─┴─┐
+DW from              ───┬──┬─                         │     r           │s
+o  4 to 10 decoder    h │h │l    74LS00N              │   e a r a a a a │wb
+│                     x │l │h  quad 2 input           │ n n m a 1 1 1 1 │ta
+│                     l │x │h   +nand gates           │ c a h m 2 3 4 5 │cn
+│                               y = -(a*b)            └─┬─┬─┬─┬─╥─╥─╥─╥─┘hk
+│ ┌────────────────────────────────────────┐     ┌────────┘ │ │ ║ ║ ║ ║
+│ │ o (latch a11)     ┌────────(ramh)──────x─────x──────────┘ │ ║ ║ ║ ║
+│ │ │ ┌───────────────x─────┐              │ ┌───x────────────┘ ║ ║ ║ ║
+│ │ ├─x───────────────x───┐ │ ┌──────────┐ │ │   │ ╔════════════x═x═x═╜
+│ │ │ │┌───┬┬───┐     │   │ │ │┌───┬┬───┐│ │ │   │ ║┌───┬┬───┐  ║ ║ ║
+│ │ │ └┤1a └┘ +5├─    │   │ │ ├┤1a └┘ +5├┘ │ │   │ ╚┤b3 └┘ +5├─ ║ ║ ║
+│ │ └──┤2a    1c├─────x─┐ │ │ └┤1b    4b├──x─┤ ┌─x──┤a<bi  a3├══x═x═x══o <(a15 Latch)
+│ └────┤2b    1b├───┐ │ │ │ │nc┤1y    4a├──x─┤ │ └──┤a=bi  b2╞══x═x═╝
+└──────┤2c    1f├───x─x─x─┴─x──┤2a    4y├──┘ │ ├────┤a>bi  a2├══x═x════o <(a14 Latch)
+ ┌─────┤2d    1e├───x─┤ │ ┌─x──┤2b    3b├────┤ │  nc┤a>bo  a1╞══x═x════o <(a13 Latch)
+ │  ┌──┤2y    1d├───┤ │ │ │ └──┤2y    3a├──┐ │ │ ┌──┤a=bo  b1╞══x═╝
+ │  │ ─┤GND   1y├─┐ │ │ │ │   ─┤GND   3y├┐ │ │ │ │nc┤a<bo  a0╞══x══════o <(a12 Latch)
+ │  │  └────────┘ │ │ │ │ │    └────────┘│ │ │ └─x──┤GND   b0╞══╝
+ │  └─o oa (bank) │ │ │ └─x──────────────┘ │ │   │  └────────┘
+ │      Inverted  │ │ └───x────(ramh)──────┘ │   │
+ │      at 74LS04 │ └─────x──────────────────x───┘
+ └────(ram)───────x───────┴────(ram)─────────┘
+                  │
+        54LS51j   o TO ROM -CE (c1h c1l)               74LS85N
+    and-or-invert                                  4 bit magnitude
+        gates                                        comparator
+   y1= -(abc+def)
+   y2= -(ab+cd)
+
+
+Glue Logic for 54LS51j Pin 2y - to 74l204 ├────────────────────────────────────
+──────────────────────────────────────────┘
+
+     4y = - RAM
+
+Y2 = A = -(A*B + C*D)
+     A = -(a11 * 4y + DW * RAM)
+     A = -(a11 * -RAM + DW * RAM)
+
+     IF RAM = 0       Result - a11 directed to ROM a11
+        A = -a11
+     IF RAM = 1       Result - DW directed to ROM a11 (Static RAM R/W ???)
+        A = -DW                since ROM a11 = RAM R/W  then RAM is 2K and
+                               can potentially reside in upper or lower half
+                               of each 4K slot available.
+
+
+Glue Logic for 54LS51j Pin 1y - to ROM -CE  ├──────────────────────────────────
+────────────────────────────────────────────┘
+
+     2y = -(a11 * RAM)
+     3y = -(RAMH * RAM)
+
+Y1 = CE = -(A*B*C + D*E*F)
+     CE = -(2y * ADDR * 3y + ADDR * RAMH * a11)
+
+
+     IF RAM = 0 & RAMH = 0 │  Result - chip enable = MS4 bits address
+     IF RAM = 0 & RAMH = 1 │                         address compare equal
+     ──────────────────────┘
+     2y = 1                            add  a11  add * a11   add + add * a11
+     3y = 1                             0    0       0              0
+                                        0    1       0              0
+     CE = -(ADDR + ADDR * a11)          1    0       0              1
+     CE = -ADDR                         1    1       1              1
+
+
+     IF RAM = 1 & RAMH = 0 │  Result - RAM mapped into low 2K bank ?
+     ──────────────────────┘
+     2y = -a11                         a11  add  -a11  -a11 * add
+     3y = 1                             0    0    1        0
+                                        0    1    1        1
+     CE = -(-a11 * ADDR)                1    0    0        0
+                                        1    1    0        0
+
+
+     IF RAM = 1 & RAMH = 1 │  Result - RAM mapped into high 2K bank ?
+     ──────────────────────┘
+     2y = -a11                               a11  add  a11 * add
+     3y = 0                                   0    0       0
+                                              0    1       0
+     CE = -(-a11 * ADDR * 0 + ADDR * a11)     1    0       0
+     CE = -(a11 *  ADDR)                      1    1       1
+
+
+2764 Pinout ├────────────────────────────────────────────────────────────────
+────────────┘
+     ┌───┬──┬───┐         (Ax = Address / Dx = Data)
+  A7 │1  └──┘ 24│ VCC
+  A6 │2       23│ A8
+  A5 │3       22│ A9
+  A4 │4       21│ A11
+  A3 │5       20│ -OE      Output Enable
+  A2 │6  2732 19│ A10
+  A1 │7       18│ -CE      Chip Select
+  A0 │8       17│ D7
+  D0 │9       16│ D6
+  D1 │10      15│ D5
+  D2 │11      14│ D4
+ GND │12      13│ D3
+     └──────────┘
+
+Compatible RAM Pinout ├───────────────────────────────────────────────────────
+──────────────────────┘
+     ┌───┬──┬───┐         (Ax = Address / Dx = Data)
+  A7 │1  └──┘ 24│ VCC
+  A6 │2       23│ A8
+  A5 │3       22│ A9
+  A4 │4       21│ R/W
+  A3 │5       20│ -OE -IE  Input Enable / Output Enable?
+  A2 │6  2732 19│ A10
+  A1 │7       18│ -CE      Chip Select
+  A0 │8       17│ D7
+  D0 │9       16│ D6
+  D1 │10      15│ D5
+  D2 │11      14│ D4
+ GND │12      13│ D3
+     └──────────┘
+
+
